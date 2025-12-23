@@ -2,17 +2,37 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreateTeamDto {
+  name: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
 
+type Mutation {
+  createTeam(createTeamDto: CreateTeamDto!): Team!
+}
+
+type Player {
+  firstName: String!
+  height: Float!
+  id: ID!
+  imageUrl: String
+  lastName: String!
+  team: Team!
+  yearOfBirth: Float!
+}
+
 type Query {
   health: String!
+  teamById(id: String!): Team!
 }
 
 type Team {
   id: ID!
   name: String!
+  players: [Player!]
 }
