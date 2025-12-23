@@ -1,0 +1,490 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Account {
+  email: String!
+  id: ID!
+  role: AccountRole!
+  team: Team
+}
+
+"""Account roles in the system"""
+enum AccountRole {
+  ADMIN
+  ATHLETE
+  USER
+}
+
+type AcuteSymptom {
+  createdAt: Date!
+  id: ID!
+  key: String!
+  label: String!
+  severityScore: Float
+}
+
+type AcuteSymptomParameter {
+  id: ID!
+  key: String!
+  label: String!
+}
+
+type AcuteSymptomRule {
+  id: ID!
+  operator: ComparisonOperator!
+  parameter: AcuteSymptomParameter!
+  parameterId: ID!
+  value: String!
+}
+
+type Athlete {
+  account: Account!
+  createdAt: Date!
+  dateOfBirth: DateSimple!
+  email: String!
+  firstName: String!
+  gender: Gender!
+  id: ID!
+  lastName: String!
+  phoneNumber: String!
+  team: Team!
+  terraId: ID
+  wearableProvider: WearableProvider
+  windowInstances(dateRange: DateRange!, window: Window!): [WindowInstance!]!
+}
+
+type AuthResponse {
+  """JWT access token"""
+  accessToken: String!
+
+  """Authenticated account"""
+  account: Account!
+}
+
+"""Comparison operator for acute symptom rules"""
+enum ComparisonOperator {
+  EQUAL
+  GREATER_THAN
+  LESS_THAN
+}
+
+input CreateHealthFactorInput {
+  """Array of health factor property IDs"""
+  healthFactorPropertyIds: [ID!]!
+
+  """Name of the health factor"""
+  name: String!
+}
+
+input CreateHealthFactorPropertyInput {
+  """Input type of the health factor property"""
+  inputType: HealthFactorType!
+
+  """Key of the health factor property"""
+  key: String!
+
+  """Label of the health factor property"""
+  label: String!
+
+  """Measurement unit ID of the health factor property"""
+  measurementUnitId: ID!
+
+  """Options of the health factor property"""
+  options: [String!]
+}
+
+input CreateScheduleEventInput {
+  description: String
+  endAt: DateTime!
+  eventTypeKey: String!
+  fields: [ScheduleEventFieldValueInput!]
+  locationText: String
+
+  """
+  Array of athlete IDs. If not provided, event applies to the whole team.
+  """
+  participantAthleteIds: [ID!]
+  startAt: DateTime!
+  teamEvent: Boolean
+  title: String!
+}
+
+input CreateUserInput {
+  """Email address"""
+  email: String!
+
+  """First name"""
+  firstName: String!
+
+  """Last name"""
+  lastName: String!
+
+  """Password"""
+  password: String!
+  role: String!
+
+  """Team ID"""
+  teamId: ID!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+input DateRange {
+  endDate: DateSimple!
+  startDate: DateSimple!
+}
+
+"""Date simple scalar type (YYYY-MM-DD format)"""
+scalar DateSimple
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type GeminiStreamChunk {
+  done: Boolean!
+  text: String!
+}
+
+"""Gender options for athletes"""
+enum Gender {
+  FEMALE
+  MALE
+}
+
+type HealthFactor {
+  createdAt: Date!
+  creator: Account!
+  healthFactorProperties: [HealthFactorProperty!]
+  id: ID!
+  name: String!
+  updatedAt: Date!
+}
+
+type HealthFactorProperties {
+  createdAt: Date!
+  healthFactor: HealthFactor!
+  healthFactorProperty: HealthFactorProperty!
+  id: ID!
+  updatedAt: Date!
+}
+
+type HealthFactorProperty {
+  createdAt: Date!
+  creator: Account!
+  id: ID!
+  inputType: HealthFactorType!
+  key: String!
+  label: String!
+  measurementUnit: HealthFactorPropertyMeasurementUnit!
+  options: [String!]!
+  updatedAt: Date!
+}
+
+type HealthFactorPropertyMeasurementUnit {
+  class: HealthFactorPropertyMeasurementUnitClass!
+  id: ID!
+  symbol: String!
+  type: String!
+}
+
+"""Health factor property measurement unit class"""
+enum HealthFactorPropertyMeasurementUnitClass {
+  DURATION
+  LENGTH
+  MASS
+  TIME
+}
+
+"""Health factor type"""
+enum HealthFactorType {
+  BOOLEAN
+  DATE
+  DATE_TIME
+  MULTI_SELECT
+  NUMBER
+  SELECT
+  SLIDER
+  TEXT
+  TIME
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+input LoginInput {
+  """Email address"""
+  email: String!
+
+  """Password"""
+  password: String!
+}
+
+type Metrics {
+  hrv: Float
+  recovery: Float
+  restorativeSleep: Float
+  restorativeSleepDuration: Float
+  rhr: Float
+  sleepConsistency: Float
+  sleepDuration: Float
+  sleepEfficiency: Float
+  sleepPerformance: Float
+  strain: Float
+}
+
+type Mutation {
+  addPropertiesToHealthFactor(healthFactorId: ID!, healthFactorPropertyIds: [ID!]!): [HealthFactorProperties!]!
+  adminCreateTeamRegistrationLink(teamId: ID!): TeamRegistrationLink!
+  adminCreateUser(createUserInput: CreateUserInput!): User!
+  adminSyncAthleteTerraHistoricalData(athleteId: ID!, dateRange: DateRange!): Boolean
+  createHealthFactor(createHealthFactorInput: CreateHealthFactorInput!): HealthFactor!
+  createHealthFactorProperty(createHealthFactorPropertyInput: CreateHealthFactorPropertyInput!): HealthFactorProperty!
+  createScheduleEvent(createScheduleEventInput: CreateScheduleEventInput!): ScheduleEvent!
+  deleteScheduleEvent(eventId: ID!): Boolean!
+  login(input: LoginInput!): AuthResponse!
+  registerAthlete(registerAthleteInput: RegisterAthleteInput!): Athlete!
+  requestAthleteWearableConnectionSession: TerraAuthenticationWidgetUrlResponse!
+  resolveNotification(id: ID!): Notification!
+  syncAthlete(athleteId: String!): Boolean!
+  syncTeamAthletes: Boolean!
+  takeActionOnTriggeredAcuteSymptoms(ids: [ID!]!, status: TriggeredAcuteSymptomStatus!): [TriggeredAcuteSymptom!]!
+  updateScheduleEvent(updateScheduleEventInput: UpdateScheduleEventInput!): ScheduleEvent!
+}
+
+type Notification {
+  acuteSymptoms: [TriggeredAcuteSymptom!]
+  body: String!
+  count: String!
+  createdAt: Date!
+  id: ID!
+  resolved: Boolean!
+  subTitle: String!
+  title: String!
+  type: NotificationType!
+}
+
+type NotificationType {
+  class: String!
+  id: ID!
+  key: String!
+  label: String!
+}
+
+type Query {
+  athlete(id: ID!): Athlete
+  geminiFileSearchPrompt(prompt: String!): String!
+  getMyTeamScheduleEvents(dateRange: DateRange): [ScheduleEvent!]!
+  getScheduleEventTypes: [ScheduleEventType!]!
+  getTeamByRegistrationLinkToken(token: String!): Team!
+  health: String!
+  healthFactor(id: ID!): HealthFactor
+  healthFactors: [HealthFactor!]!
+  me(id: ID!): Account
+  myTeam: Team
+  myTeamTriggeredAcuteSymptoms: [TriggeredAcuteSymptom!]!
+  notification(id: ID!): Notification
+  notifications: [Notification!]!
+  team(id: ID!): Team
+  user(id: ID!): User
+  users: [User!]
+}
+
+input RegisterAthleteInput {
+  """Date of birth of the athlete"""
+  dateOfBirth: DateSimple!
+
+  """Email of the athlete"""
+  email: String!
+
+  """First name of the athlete"""
+  firstName: String!
+
+  """Gender of the athlete"""
+  gender: Gender!
+
+  """Last name of the athlete"""
+  lastName: String!
+
+  """Password of the athlete"""
+  password: String!
+
+  """Phone number of the athlete"""
+  phoneNumber: String!
+
+  """Token of the registration link"""
+  token: String!
+}
+
+type ScheduleEvent {
+  description: String
+  endAt: DateTime!
+  fieldValues: [ScheduleEventFieldValue!]
+  id: ID!
+  locationText: String
+  participants: [ScheduleEventParticipant!]
+  startAt: DateTime!
+  team: Team!
+  teamEvent: Boolean!
+  teamId: ID!
+  title: String!
+  type: ScheduleEventType!
+  typeId: ID!
+}
+
+type ScheduleEventField {
+  dataType: ScheduleEventFieldDataType!
+  defaultLabel: String!
+  id: ID!
+  key: String!
+}
+
+enum ScheduleEventFieldDataType {
+  BOOLEAN
+  DATETIME
+  NUMBER
+  STRING
+}
+
+type ScheduleEventFieldValue {
+  event: ScheduleEvent!
+  eventId: ID!
+  field: ScheduleEventField!
+  fieldId: ID!
+  id: ID!
+  value: JSON
+}
+
+input ScheduleEventFieldValueInput {
+  fieldValue: String!
+  value: JSON!
+}
+
+type ScheduleEventParticipant {
+  athlete: Athlete!
+  athleteId: ID!
+  event: ScheduleEvent!
+  eventId: ID!
+}
+
+type ScheduleEventType {
+  color: String!
+  description: String
+  id: ID!
+  isSystem: Boolean!
+  key: String!
+  name: String!
+  teamId: ID
+}
+
+type SleepInstance {
+  end: SleepTime!
+  start: SleepTime!
+}
+
+type SleepTime {
+  timestamp: String!
+  timezoneCode: String!
+}
+
+type Subscription {
+  geminiFileSearchPromptStream(prompt: String!): GeminiStreamChunk!
+}
+
+type Team {
+  athletes: [Athlete!]
+  createdAt: Date!
+  id: ID!
+  name: String!
+  registrationLinks: [TeamRegistrationLink!]
+  updatedAt: Date!
+  users: [User!]
+  windowInstances(dateRange: DateRange!, window: Window!): [WindowInstance!]!
+}
+
+type TeamRegistrationLink {
+  createdAt: Date!
+  expiryTimestamp: Date!
+  id: ID!
+  team: Team!
+  token: String!
+}
+
+type TerraAuthenticationWidgetUrlResponse {
+  url: String!
+}
+
+type Timezone {
+  offset: String!
+}
+
+type TriggeredAcuteSymptom {
+  athlete: Athlete!
+  athleteId: ID!
+  createdAt: Date!
+  id: ID!
+  notification: Notification
+  notificationId: ID
+  resolved: Boolean!
+  severityScore: Float
+  status: TriggeredAcuteSymptomStatus!
+  statusChangedAt: Date
+  symptom: AcuteSymptom!
+  symptomId: ID!
+}
+
+enum TriggeredAcuteSymptomStatus {
+  DISMISSED
+  RESOLVED
+  UNACTIONED
+}
+
+input UpdateScheduleEventInput {
+  description: String
+  endAt: DateTime
+  eventTypeKey: String
+  fields: [ScheduleEventFieldValueInput!]
+  id: ID!
+  locationText: String
+
+  """
+  Array of athlete IDs. If not provided, event applies to the whole team.
+  """
+  participantAthleteIds: [ID!]
+  startAt: DateTime
+  title: String
+}
+
+type User {
+  account: Account!
+  createdAt: Date!
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  role: String!
+  team: Team!
+  updatedAt: Date!
+}
+
+type WearableProvider {
+  id: ID!
+  key: String!
+  name: String!
+}
+
+"""Window scalar: day | week | month"""
+scalar Window
+
+type WindowInstance {
+  endDate: DateSimple!
+  metrics: Metrics!
+  sleepInstance: SleepInstance
+  startDate: DateSimple!
+  timezone: Timezone
+}

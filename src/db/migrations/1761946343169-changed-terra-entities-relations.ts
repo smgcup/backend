@@ -1,0 +1,124 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class ChangedTerraEntitiesRelations1761946343169 implements MigrationInterface {
+    name = 'ChangedTerraEntitiesRelations1761946343169'
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "FK_51da020b2989574ee0a0c6dd873"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "FK_87fe145f014bb16d177d1bfc041"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "FK_955addfb582cfca2c09898e91f1"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "FK_abc49b0455c4399afcef616bf2b"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" DROP CONSTRAINT "FK_8af420cd0eeeb6d5b528a1a0aeb"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity" DROP CONSTRAINT "FK_20b8fc0c5107149db3656a4a8e7"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP CONSTRAINT "FK_3ff14b07b201dfa5370231957d4"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP CONSTRAINT "FK_885b13fc32227a5520d1ad2af74"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP CONSTRAINT "FK_aba8af3f0d1a9f4dea8cfae4702"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" RENAME COLUMN "activity_movement_id" TO "activity_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" RENAME CONSTRAINT "UQ_8af420cd0eeeb6d5b528a1a0aeb" TO "UQ_153ab9f7366b78f8842f62a31be"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "UQ_abc49b0455c4399afcef616bf2b"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP COLUMN "sleep_perf_metrics_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "UQ_51da020b2989574ee0a0c6dd873"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP COLUMN "sleep_stage_metrics_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "UQ_955addfb582cfca2c09898e91f1"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP COLUMN "sleep_hr_metrics_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP CONSTRAINT "UQ_87fe145f014bb16d177d1bfc041"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" DROP COLUMN "sleep_respiration_data_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity" DROP CONSTRAINT "UQ_20b8fc0c5107149db3656a4a8e7"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity" DROP COLUMN "activity_metrics_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP CONSTRAINT "UQ_885b13fc32227a5520d1ad2af74"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP COLUMN "daily_metrics_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP CONSTRAINT "UQ_3ff14b07b201dfa5370231957d4"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP COLUMN "stress_data_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP CONSTRAINT "UQ_aba8af3f0d1a9f4dea8cfae4702"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" DROP COLUMN "daily_activity_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD "daily_record_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD CONSTRAINT "UQ_74249250ffbfa83ece12b990543" UNIQUE ("daily_record_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_activity" ADD "daily_record_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_activity" ADD CONSTRAINT "UQ_f81cc315c0b89170cab7864eb5d" UNIQUE ("daily_record_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_stress_data" ADD "daily_record_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_stress_data" ADD CONSTRAINT "UQ_fdd32b6f9f43d24e9756085b18f" UNIQUE ("daily_record_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_perf_metrics" ADD "sleep_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_perf_metrics" ADD CONSTRAINT "UQ_46c7731806833eb2837e1cf94c6" UNIQUE ("sleep_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_respiration_data" ADD "sleep_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_respiration_data" ADD CONSTRAINT "UQ_fe5a90845a9ae5c4b46fae2c51a" UNIQUE ("sleep_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_hr_metrics" ADD "sleep_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_hr_metrics" ADD CONSTRAINT "UQ_d3c0fee149dfbae5505cac7a031" UNIQUE ("sleep_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_stage_metrics" ADD "sleep_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_stage_metrics" ADD CONSTRAINT "UQ_f36eddded22e8fcff7883adf33b" UNIQUE ("sleep_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_movement_data" ADD "activity_metrics_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_movement_data" ADD CONSTRAINT "UQ_d8542cd289a465aaeeabfa18863" UNIQUE ("activity_metrics_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP COLUMN "recovery"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD "recovery" integer`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP COLUMN "strain"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD "strain" numeric(3,1)`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD CONSTRAINT "FK_74249250ffbfa83ece12b990543" FOREIGN KEY ("daily_record_id") REFERENCES "terra_daily_record"("record_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_activity" ADD CONSTRAINT "FK_f81cc315c0b89170cab7864eb5d" FOREIGN KEY ("daily_record_id") REFERENCES "terra_daily_record"("record_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_stress_data" ADD CONSTRAINT "FK_fdd32b6f9f43d24e9756085b18f" FOREIGN KEY ("daily_record_id") REFERENCES "terra_daily_record"("record_id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_perf_metrics" ADD CONSTRAINT "FK_46c7731806833eb2837e1cf94c6" FOREIGN KEY ("sleep_id") REFERENCES "terra_sleep"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_respiration_data" ADD CONSTRAINT "FK_fe5a90845a9ae5c4b46fae2c51a" FOREIGN KEY ("sleep_id") REFERENCES "terra_sleep"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_hr_metrics" ADD CONSTRAINT "FK_d3c0fee149dfbae5505cac7a031" FOREIGN KEY ("sleep_id") REFERENCES "terra_sleep"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_stage_metrics" ADD CONSTRAINT "FK_f36eddded22e8fcff7883adf33b" FOREIGN KEY ("sleep_id") REFERENCES "terra_sleep"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_movement_data" ADD CONSTRAINT "FK_d8542cd289a465aaeeabfa18863" FOREIGN KEY ("activity_metrics_id") REFERENCES "terra_activity_metrics"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" ADD CONSTRAINT "FK_153ab9f7366b78f8842f62a31be" FOREIGN KEY ("activity_id") REFERENCES "terra_activity"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" DROP CONSTRAINT "FK_153ab9f7366b78f8842f62a31be"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_movement_data" DROP CONSTRAINT "FK_d8542cd289a465aaeeabfa18863"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_stage_metrics" DROP CONSTRAINT "FK_f36eddded22e8fcff7883adf33b"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_hr_metrics" DROP CONSTRAINT "FK_d3c0fee149dfbae5505cac7a031"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_respiration_data" DROP CONSTRAINT "FK_fe5a90845a9ae5c4b46fae2c51a"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_perf_metrics" DROP CONSTRAINT "FK_46c7731806833eb2837e1cf94c6"`);
+        await queryRunner.query(`ALTER TABLE "terra_stress_data" DROP CONSTRAINT "FK_fdd32b6f9f43d24e9756085b18f"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_activity" DROP CONSTRAINT "FK_f81cc315c0b89170cab7864eb5d"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP CONSTRAINT "FK_74249250ffbfa83ece12b990543"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP COLUMN "strain"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD "strain" double precision`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP COLUMN "recovery"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" ADD "recovery" double precision`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_movement_data" DROP CONSTRAINT "UQ_d8542cd289a465aaeeabfa18863"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_movement_data" DROP COLUMN "activity_metrics_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_stage_metrics" DROP CONSTRAINT "UQ_f36eddded22e8fcff7883adf33b"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_stage_metrics" DROP COLUMN "sleep_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_hr_metrics" DROP CONSTRAINT "UQ_d3c0fee149dfbae5505cac7a031"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_hr_metrics" DROP COLUMN "sleep_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_respiration_data" DROP CONSTRAINT "UQ_fe5a90845a9ae5c4b46fae2c51a"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_respiration_data" DROP COLUMN "sleep_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_perf_metrics" DROP CONSTRAINT "UQ_46c7731806833eb2837e1cf94c6"`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep_perf_metrics" DROP COLUMN "sleep_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_stress_data" DROP CONSTRAINT "UQ_fdd32b6f9f43d24e9756085b18f"`);
+        await queryRunner.query(`ALTER TABLE "terra_stress_data" DROP COLUMN "daily_record_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_activity" DROP CONSTRAINT "UQ_f81cc315c0b89170cab7864eb5d"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_activity" DROP COLUMN "daily_record_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP CONSTRAINT "UQ_74249250ffbfa83ece12b990543"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_metrics" DROP COLUMN "daily_record_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD "daily_activity_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD CONSTRAINT "UQ_aba8af3f0d1a9f4dea8cfae4702" UNIQUE ("daily_activity_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD "stress_data_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD CONSTRAINT "UQ_3ff14b07b201dfa5370231957d4" UNIQUE ("stress_data_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD "daily_metrics_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD CONSTRAINT "UQ_885b13fc32227a5520d1ad2af74" UNIQUE ("daily_metrics_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_activity" ADD "activity_metrics_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_activity" ADD CONSTRAINT "UQ_20b8fc0c5107149db3656a4a8e7" UNIQUE ("activity_metrics_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD "sleep_respiration_data_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "UQ_87fe145f014bb16d177d1bfc041" UNIQUE ("sleep_respiration_data_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD "sleep_hr_metrics_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "UQ_955addfb582cfca2c09898e91f1" UNIQUE ("sleep_hr_metrics_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD "sleep_stage_metrics_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "UQ_51da020b2989574ee0a0c6dd873" UNIQUE ("sleep_stage_metrics_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD "sleep_perf_metrics_id" uuid`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "UQ_abc49b0455c4399afcef616bf2b" UNIQUE ("sleep_perf_metrics_id")`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" RENAME CONSTRAINT "UQ_153ab9f7366b78f8842f62a31be" TO "UQ_8af420cd0eeeb6d5b528a1a0aeb"`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" RENAME COLUMN "activity_id" TO "activity_movement_id"`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD CONSTRAINT "FK_aba8af3f0d1a9f4dea8cfae4702" FOREIGN KEY ("daily_activity_id") REFERENCES "terra_daily_activity"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD CONSTRAINT "FK_885b13fc32227a5520d1ad2af74" FOREIGN KEY ("daily_metrics_id") REFERENCES "terra_daily_metrics"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_daily_record" ADD CONSTRAINT "FK_3ff14b07b201dfa5370231957d4" FOREIGN KEY ("stress_data_id") REFERENCES "terra_stress_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_activity" ADD CONSTRAINT "FK_20b8fc0c5107149db3656a4a8e7" FOREIGN KEY ("activity_metrics_id") REFERENCES "terra_activity_metrics"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_activity_metrics" ADD CONSTRAINT "FK_8af420cd0eeeb6d5b528a1a0aeb" FOREIGN KEY ("activity_movement_id") REFERENCES "terra_activity_movement_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "FK_abc49b0455c4399afcef616bf2b" FOREIGN KEY ("sleep_perf_metrics_id") REFERENCES "terra_sleep_perf_metrics"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "FK_955addfb582cfca2c09898e91f1" FOREIGN KEY ("sleep_hr_metrics_id") REFERENCES "terra_sleep_hr_metrics"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "FK_87fe145f014bb16d177d1bfc041" FOREIGN KEY ("sleep_respiration_data_id") REFERENCES "terra_sleep_respiration_data"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "terra_sleep" ADD CONSTRAINT "FK_51da020b2989574ee0a0c6dd873" FOREIGN KEY ("sleep_stage_metrics_id") REFERENCES "terra_sleep_stage_metrics"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`);
+    }
+
+}

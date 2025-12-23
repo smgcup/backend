@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: amatra-backend
+    ports:
+      - '${PORT:-4000}:4000'
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+      - DB_HOST=${DB_HOST:-postgres}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USERNAME=${DB_USERNAME:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DB_DATABASE=${DB_DATABASE:-postgres}
+      - DB_SYNCH=${DB_SYNCH:-false}
+      - DB_LOG=${DB_LOG:-false}
+      - NAMESPACE=${NAMESPACE:-default}
+    env_file:
+      - .env
+    restart: unless-stopped
+    networks:
+      - amatra-network
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "require('http').get('http://localhost:4000/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})",
+        ]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+networks:
+  amatra-network:
+    driver: bridge

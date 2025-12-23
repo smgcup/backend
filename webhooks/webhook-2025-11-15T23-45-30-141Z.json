@@ -1,0 +1,18 @@
+{
+  "message": "User has successfully authenticated",
+  "reference_id": "019a89e7-857a-77bc-9790-40f85ee6a487",
+  "status": "success",
+  "user": {
+    "reference_id": "019a89e7-857a-77bc-9790-40f85ee6a487",
+    "provider": "WHOOP",
+    "scopes": "read:workout,offline,read:profile,read:body_measurement,read:recovery,read:cycles,read:sleep",
+    "created_at": "2025-11-15T23:45:30.015688",
+    "last_webhook_update": null,
+    "active": true,
+    "user_id": "5d742855-9f99-4bac-9cd2-acee2713abde"
+  },
+  "widget_session_id": "21c8da0d-ed22-4488-81bb-7a06cbb7c08c",
+  "type": "auth",
+  "version": "2022-03-16",
+  "_terraReference": "4e196a2c-2780-4a1a-933a-0bc0f4797d5d"
+}
