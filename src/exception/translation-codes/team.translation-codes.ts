@@ -4,4 +4,3 @@ export const TEAM_TRANSLATION_CODES = {
   teamNotFoundForUser: 'teamNotFoundForUser',
   teamNotFoundForAthlete: 'teamNotFoundForAthlete',
 } as const;
-

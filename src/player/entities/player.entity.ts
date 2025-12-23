@@ -1,5 +1,6 @@
-import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Team } from '../../team/entities/team.entity';
 
 @ObjectType()
 @Entity()
@@ -27,4 +28,9 @@ export class Player {
   @Field(() => String, { nullable: true })
   @Column({ name: 'image_url', type: 'text', nullable: true })
   imageUrl: string;
+
+  @Field(() => Team, { nullable: false })
+  @ManyToOne(() => Team, (team) => team.id, { nullable: false })
+  @JoinColumn({ name: 'team_id' })
+  team: Team;
 }

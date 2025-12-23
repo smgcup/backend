@@ -7,6 +7,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ApplicationExceptionFilter } from './exception/application-exception.filter';
 import * as Joi from 'joi';
 import { HealthModule } from './health/health.module';
+import { TeamModule } from './team/team.module';
+import { PlayerModule } from './player/player.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { HealthModule } from './health/health.module';
       isGlobal: true,
     }),
     HealthModule,
+    TeamModule,
+    PlayerModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],

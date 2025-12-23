@@ -11,3 +11,8 @@ scalar DateSimple
 type Query {
   health: String!
 }
+
+type Team {
+  id: ID!
+  name: String!
+}
