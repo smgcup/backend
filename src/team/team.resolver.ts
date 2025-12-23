@@ -3,10 +3,14 @@ import { TeamService } from './team.service';
 import { Team } from './entities/team.entity';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { Player } from '../player/entities/player.entity';
+import { PlayerService } from '../player/player.service';
 
 @Resolver(() => Team)
 export class TeamResolver {
-  constructor(private readonly teamService: TeamService) {}
+  constructor(
+    private readonly teamService: TeamService,
+    private readonly playerService: PlayerService,
+  ) {}
 
   /**
    * Query to get a team by its ID
@@ -20,7 +24,7 @@ export class TeamResolver {
 
   @ResolveField(() => [Player], { name: 'players' })
   async players(@Parent() team: Team): Promise<Player[]> {
-    return await this.teamService.getPlayersByTeamId(team.id);
+    return await this.playerService.getPlayersByTeamId(team.id);
   }
 
   /**

@@ -1,9 +1,0 @@
-{
-  "creation_timestamp": "2025-11-15 23:34:26.492718+00:00",
-  "trend_percentage": 0,
-  "status": "normal",
-  "type": "healthcheck",
-  "sent_webhooks_last_hour": 0,
-  "version": "2022-03-16",
-  "_terraReference": "e3927087-7095-4cbe-905f-54f50f2ed09b"
-}

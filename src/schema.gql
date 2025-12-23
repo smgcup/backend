@@ -2,6 +2,15 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input CreatePlayerDto {
+  firstName: String!
+  height: Float!
+  imageUrl: String!
+  lastName: String!
+  teamId: String!
+  yearOfBirth: Float!
+}
+
 input CreateTeamDto {
   name: String!
 }
@@ -13,6 +22,7 @@ scalar Date
 scalar DateSimple
 
 type Mutation {
+  createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
 }
 
@@ -28,6 +38,7 @@ type Player {
 
 type Query {
   health: String!
+  playerById(id: String!): Player!
   teamById(id: String!): Team!
 }
 

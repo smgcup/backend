@@ -54,14 +54,4 @@ export class TeamService {
       throw new InternalServerError(TEAM_TRANSLATION_CODES.teamCreationFailed);
     }
   }
-
-  /**
-   * Method to get all players by a team ID
-   * @param teamId - The ID of the team to get players for
-   * @returns The players for the given team
-   */
-  async getPlayersByTeamId(teamId: string): Promise<Player[]> {
-    const players = await this.playerRepository.find({ where: { team: { id: teamId } } });
-    return players;
-  }
 }
