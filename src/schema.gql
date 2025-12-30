@@ -2,6 +2,10 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AdminLoginResult {
+  ok: Boolean!
+}
+
 input CreatePlayerDto {
   firstName: String!
   height: Float!
@@ -22,6 +26,8 @@ scalar Date
 scalar DateSimple
 
 type Mutation {
+  adminLogin(passkey: String!): AdminLoginResult!
+  adminLogout: AdminLoginResult!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
 }

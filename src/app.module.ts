@@ -9,6 +9,7 @@ import * as Joi from 'joi';
 import { HealthModule } from './health/health.module';
 import { TeamModule } from './team/team.module';
 import { PlayerModule } from './player/player.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PlayerModule } from './player/player.module';
     HealthModule,
     TeamModule,
     PlayerModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],
