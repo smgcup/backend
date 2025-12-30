@@ -45,11 +45,12 @@ export class TeamService {
       const team = this.teamRepository.create({
         id: generateUuidv7(),
         name: createTeamDto.name,
+        createdAt: new Date(),
       });
 
       await this.teamRepository.save(team);
 
-      return team;
+      return await this.teamRepository.save(team);
     } catch {
       throw new InternalServerError(TEAM_TRANSLATION_CODES.teamCreationFailed);
     }

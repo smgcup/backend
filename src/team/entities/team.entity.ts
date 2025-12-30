@@ -16,4 +16,8 @@ export class Team {
   @Field(() => [Player], { nullable: true })
   @OneToMany(() => Player, (player) => player.team)
   players: Player[];
+
+  @Field(() => Date)
+  @Column({ name: 'created_at', type: 'timestamp', nullable: false })
+  createdAt: Date;
 }
