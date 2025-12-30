@@ -46,6 +46,7 @@ type Query {
   health: String!
   playerById(id: String!): Player!
   teamById(id: String!): Team!
+  teams: [Team!]!
 }
 
 type Team {

@@ -29,6 +29,14 @@ export class TeamService {
   }
 
   /**
+   * Method to get all teams
+   * @returns All teams
+   */
+  async getTeams(): Promise<Team[]> {
+    return await this.teamRepository.find();
+  }
+
+  /**
    * Method to create a new team
    * @param createTeamDto - The data for the new team
    * @returns The newly created team

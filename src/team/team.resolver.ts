@@ -22,6 +22,11 @@ export class TeamResolver {
     return await this.teamService.getTeamById(id);
   }
 
+  @Query(() => [Team], { name: 'teams' })
+  async teams(): Promise<Team[]> {
+    return await this.teamService.getTeams();
+  }
+
   @ResolveField(() => [Player], { name: 'players' })
   async players(@Parent() team: Team): Promise<Player[]> {
     return await this.playerService.getPlayersByTeamId(team.id);
