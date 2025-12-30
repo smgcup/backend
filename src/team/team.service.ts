@@ -7,15 +7,12 @@ import { TEAM_TRANSLATION_CODES } from '../exception/translation-codes';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { generateUuidv7 } from '../shared/utils';
 import { InternalServerError } from '../exception/exceptions';
-import { Player } from '../player/entities/player.entity';
 
 @Injectable()
 export class TeamService {
   constructor(
     @InjectRepository(Team)
     private teamRepository: Repository<Team>,
-    @InjectRepository(Player)
-    private playerRepository: Repository<Player>,
   ) {}
 
   /**
@@ -50,7 +47,7 @@ export class TeamService {
 
       await this.teamRepository.save(team);
 
-      return await this.teamRepository.save(team);
+      return team;
     } catch {
       throw new InternalServerError(TEAM_TRANSLATION_CODES.teamCreationFailed);
     }
