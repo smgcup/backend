@@ -10,6 +10,7 @@ import { HealthModule } from './health/health.module';
 import { TeamModule } from './team/team.module';
 import { PlayerModule } from './player/player.module';
 import { AdminModule } from './admin/admin.module';
+import { MatchModule } from './match/match.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AdminModule } from './admin/admin.module';
     TeamModule,
     PlayerModule,
     AdminModule,
+    MatchModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],

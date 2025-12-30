@@ -25,6 +25,21 @@ scalar Date
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
 
+type Match {
+  date: Date!
+  firstOpponent: Team!
+  id: ID!
+  secondOpponent: Team!
+  status: MatchStatus!
+}
+
+enum MatchStatus {
+  CANCELLED
+  FINISHED
+  LIVE
+  SCHEDULED
+}
+
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   adminLogout: AdminLoginResult!
