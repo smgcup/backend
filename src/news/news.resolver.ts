@@ -1,0 +1,38 @@
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { NewsService } from './news.service';
+import { News } from './entities/news.entity';
+import { CreateNewsDto } from './dto/create-news.dto';
+import { UpdateNewsDto } from './dto/update-news.dto';
+
+@Resolver()
+export class NewsResolver {
+  constructor(private readonly newsService: NewsService) {}
+
+  @Query(() => [News], { name: 'news' })
+  async news(): Promise<News[]> {
+    return await this.newsService.getNews();
+  }
+
+  @Mutation(() => News, { name: 'createNews' })
+  async createNews(@Args('createNewsDto') createNewsDto: CreateNewsDto): Promise<News> {
+    return await this.newsService.createNews(createNewsDto);
+  }
+
+  @Query(() => News, { name: 'newsById' })
+  async newsById(@Args('id', { type: () => String }) id: string): Promise<News> {
+    return await this.newsService.getNewsById(id);
+  }
+
+  @Mutation(() => News, { name: 'updateNews' })
+  async updateNews(
+    @Args('id', { type: () => String }) id: string,
+    @Args('updateNewsDto') updateNewsDto: UpdateNewsDto,
+  ): Promise<News> {
+    return await this.newsService.updateNews(id, updateNewsDto);
+  }
+
+  @Mutation(() => News, { name: 'deleteNews' })
+  async deleteNews(@Args('id', { type: () => String }) id: string): Promise<News> {
+    return await this.newsService.deleteNews(id);
+  }
+}
