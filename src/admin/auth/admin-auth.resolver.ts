@@ -20,7 +20,7 @@ export class AdminAuthResolver {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      path: '/admin',
+      path: '/',
     });
 
     return { ok: true };
@@ -28,7 +28,7 @@ export class AdminAuthResolver {
 
   @Mutation(() => AdminLoginResult)
   adminLogout(@Context() ctx: { res: Response }): AdminLoginResult {
-    ctx.res.clearCookie('admin_auth', { path: '/admin' });
+    ctx.res.clearCookie('admin_auth', { path: '/' });
     return { ok: true };
   }
 }

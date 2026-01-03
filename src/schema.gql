@@ -53,7 +53,10 @@ type Player {
   id: ID!
   imageUrl: String
   lastName: String!
+  position: String!
+  prefferedFoot: String!
   team: Team!
+  weight: Float!
   yearOfBirth: Float!
 }
 

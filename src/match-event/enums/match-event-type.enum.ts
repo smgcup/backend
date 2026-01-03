@@ -1,16 +1,14 @@
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum MatchEventType {
-  SHOT = 'SHOT', // Shot on goal
   GOAL = 'GOAL', // Goal
-  FOUL = 'FOUL', // Foul
-  CARD = 'CARD', // Card
-  SUBSTITUTION = 'SUBSTITUTION', // Substitution
+  YELLOW_CARD = 'YELLOW_CARD', // Yellow card
+  RED_CARD = 'RED_CARD', // Red card
+  GOALKEEPER_SAVE = 'GOALKEEPER_SAVE', // Goalkeeper save
+  // SUBSTITUTION = 'SUBSTITUTION', // Substitution
+  PENALTY_SCORED = 'PENALTY_SCORED', // Penalty scored
+  PENALTY_MISSED = 'PENALTY_MISSED', // Penalty missed
   HALF_TIME = 'HALF_TIME', // Half time
-  PENALTY_SHOOTOUT = 'PENALTY_SHOOTOUT', // Penalty shootout
-  CORNER_KICK = 'CORNER_KICK', // Corner kick
-  FREE_KICK = 'FREE_KICK', // Free kick
-  PENALTY_KICK = 'PENALTY_KICK', // Penalty kick
   FULL_TIME = 'FULL_TIME', // Full time
 }
 

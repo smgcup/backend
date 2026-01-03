@@ -25,6 +25,20 @@ export class Player {
   @Column({ name: 'height', type: 'integer', nullable: false })
   height: number;
 
+  @Field(() => Number)
+  @Column({ name: 'weight', type: 'int', nullable: false })
+  weight: number;
+
+  @Field(() => String)
+  @Column({ name: 'preffered_foot', type: 'text', nullable: false })
+  prefferedFoot: string;
+  // left, right
+
+  @Field(() => String)
+  @Column({ name: 'position', type: 'text', nullable: false })
+  position: string;
+  // goalkeeper, defender, midfielder, forward
+
   @Field(() => String, { nullable: true })
   @Column({ name: 'image_url', type: 'text', nullable: true })
   imageUrl: string;
