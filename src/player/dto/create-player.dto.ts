@@ -1,5 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, IsEnum, MaxLength, MinLength } from 'class-validator';
+import { PreferredFoot } from '../enums/preferred-foot.enum';
+import { PlayerPosition } from '../enums/player-position.enum';
 
 @InputType()
 export class CreatePlayerDto {
@@ -27,10 +29,25 @@ export class CreatePlayerDto {
   @IsNumber()
   height: number;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  imageUrl?: string;
+
   @Field()
   @IsNotEmpty()
-  @IsString()
-  imageUrl: string;
+  @IsNumber()
+  weight: number;
+
+  @Field(() => PreferredFoot)
+  @IsNotEmpty()
+  @IsEnum(PreferredFoot)
+  prefferedFoot: PreferredFoot;
+
+  @Field(() => PlayerPosition)
+  @IsNotEmpty()
+  @IsEnum(PlayerPosition)
+  position: PlayerPosition;
 
   @Field()
   @IsNotEmpty()

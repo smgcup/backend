@@ -1,6 +1,8 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Team } from '../../team/entities/team.entity';
+import { PreferredFoot } from '../enums/preferred-foot.enum';
+import { PlayerPosition } from '../enums/player-position.enum';
 
 @ObjectType()
 @Entity()
@@ -29,15 +31,13 @@ export class Player {
   @Column({ name: 'weight', type: 'int', nullable: false })
   weight: number;
 
-  @Field(() => String)
-  @Column({ name: 'preffered_foot', type: 'text', nullable: false })
-  prefferedFoot: string;
-  // left, right
+  @Field(() => PreferredFoot)
+  @Column({ name: 'preffered_foot', type: 'enum', enum: PreferredFoot, nullable: false })
+  prefferedFoot: PreferredFoot;
 
-  @Field(() => String)
-  @Column({ name: 'position', type: 'text', nullable: false })
-  position: string;
-  // goalkeeper, defender, midfielder, forward
+  @Field(() => PlayerPosition)
+  @Column({ name: 'position', type: 'enum', enum: PlayerPosition, nullable: false })
+  position: PlayerPosition;
 
   @Field(() => String, { nullable: true })
   @Column({ name: 'image_url', type: 'text', nullable: true })
