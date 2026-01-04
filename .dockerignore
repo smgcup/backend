@@ -42,4 +42,10 @@ webhooks/*.zip
 # Misc
 README.md
 .eslintcache
+Dockerfile
+.dockerignore
+fly.toml
+.husky
+.prettierrc
+eslint.config.mjs
 

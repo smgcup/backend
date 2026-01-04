@@ -1,13 +1,13 @@
-# Stage 1: Build
-FROM node:20-alpine AS builder
+# Build stage
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm i --legacy-peer-deps
+# Install all dependencies (including dev for build)
+RUN npm ci --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -15,37 +15,35 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Stage 2: Production
-FROM node:20-alpine AS production
+# Production stage
+FROM node:22-alpine AS production
 
 WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nestjs -u 1001
 
 # Copy package files
 COPY package*.json ./
 
-# Install only production dependencies (skip scripts to avoid husky prepare script)
-RUN npm i --legacy-peer-deps --omit=dev --ignore-scripts && npm cache clean --force
+# Install only production dependencies (ignore-scripts skips husky prepare)
+RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts && npm cache clean --force
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
-# Create a non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001
-
-# Change ownership of the app directory
+# Change ownership to non-root user
 RUN chown -R nestjs:nodejs /app
 
 # Switch to non-root user
 USER nestjs
 
-# Expose the port the app runs on
-EXPOSE 4000
+# Cloud Run sets PORT environment variable (default 8080)
+ENV NODE_ENV=production
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:4000/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+# Expose port (documentation only, Cloud Run uses PORT env var)
+EXPOSE 8080
 
 # Start the application
-CMD ["node", "dist/main.js"]
-
+CMD ["node", "dist/main"]
