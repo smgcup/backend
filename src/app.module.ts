@@ -11,6 +11,7 @@ import { TeamModule } from './team/team.module';
 import { PlayerModule } from './player/player.module';
 import { AdminModule } from './admin/admin.module';
 import { MatchModule } from './match/match.module';
+import { NewsModule } from './news/news.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { MatchModule } from './match/match.module';
     PlayerModule,
     AdminModule,
     MatchModule,
+    NewsModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],

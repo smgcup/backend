@@ -6,6 +6,13 @@ type AdminLoginResult {
   ok: Boolean!
 }
 
+input CreateNewsDto {
+  category: String!
+  content: String!
+  imageUrl: String!
+  title: String!
+}
+
 input CreatePlayerDto {
   firstName: String!
   height: Float!
@@ -43,8 +50,20 @@ enum MatchStatus {
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   adminLogout: AdminLoginResult!
+  createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
+  deleteNews(id: String!): News!
+  updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
+}
+
+type News {
+  category: String!
+  content: String!
+  createdAt: Date!
+  id: ID!
+  imageUrl: String!
+  title: String!
 }
 
 type Player {
@@ -62,6 +81,8 @@ type Player {
 
 type Query {
   health: String!
+  news: [News!]!
+  newsById(id: String!): News!
   playerById(id: String!): Player!
   teamById(id: String!): Team!
   teams: [Team!]!
@@ -72,4 +93,11 @@ type Team {
   id: ID!
   name: String!
   players: [Player!]
+}
+
+input UpdateNewsDto {
+  category: String
+  content: String
+  imageUrl: String
+  title: String
 }

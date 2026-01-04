@@ -19,3 +19,4 @@ export * from './wearable-provider.translation-codes';
 export * from './triggered-acute-symptom.translation-codes';
 export * from './notification.translation-codes';
 export * from './player.translation-codes';
+export * from './news.translation-codes';
