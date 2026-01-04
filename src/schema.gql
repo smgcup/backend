@@ -9,9 +9,12 @@ type AdminLoginResult {
 input CreatePlayerDto {
   firstName: String!
   height: Float!
-  imageUrl: String!
+  imageUrl: String
   lastName: String!
+  position: PlayerPosition!
+  prefferedFoot: PreferredFoot!
   teamId: String!
+  weight: Float!
   yearOfBirth: Float!
 }
 
@@ -53,11 +56,23 @@ type Player {
   id: ID!
   imageUrl: String
   lastName: String!
-  position: String!
-  prefferedFoot: String!
+  position: PlayerPosition!
+  prefferedFoot: PreferredFoot!
   team: Team!
   weight: Float!
   yearOfBirth: Float!
+}
+
+enum PlayerPosition {
+  DEFENDER
+  FORWARD
+  GOALKEEPER
+  MIDFIELDER
+}
+
+enum PreferredFoot {
+  LEFT
+  RIGHT
 }
 
 type Query {
