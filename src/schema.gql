@@ -71,6 +71,7 @@ enum PlayerPosition {
 }
 
 enum PreferredFoot {
+  BOTH
   LEFT
   RIGHT
 }
