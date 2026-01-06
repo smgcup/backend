@@ -10,5 +10,3 @@ export class UpdateTeamDto {
   @IsString()
   name?: string;
 }
-
-

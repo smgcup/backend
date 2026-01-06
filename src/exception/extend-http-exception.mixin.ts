@@ -6,7 +6,6 @@ export interface CustomErrorResponse {
 }
 
 export const ExtendException = <T extends HttpException>(exception: Type<T>) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   class ExtendedException extends (exception as any) {
     constructor(translationCode: string, description?: string) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call

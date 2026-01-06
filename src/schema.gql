@@ -6,6 +6,13 @@ type AdminLoginResult {
   ok: Boolean!
 }
 
+input CreateMatchDto {
+  date: Date!
+  firstOpponentId: String!
+  secondOpponentId: String!
+  status: MatchStatus!
+}
+
 input CreateNewsDto {
   category: String!
   content: String!
@@ -39,6 +46,8 @@ type Match {
   date: Date!
   firstOpponent: Team!
   id: ID!
+  score1: Int
+  score2: Int
   secondOpponent: Team!
   status: MatchStatus!
 }
@@ -53,12 +62,15 @@ enum MatchStatus {
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   adminLogout: AdminLoginResult!
+  createMatch(createMatchDto: CreateMatchDto!): Match!
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
+  deleteMatch(id: String!): Match!
   deleteNews(id: String!): News!
   deletePlayer(id: String!): Player!
   deleteTeam(id: String!): Team!
+  updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
   updateTeam(id: String!, updateTeamDto: UpdateTeamDto!): Team!
@@ -101,6 +113,8 @@ enum PreferredFoot {
 
 type Query {
   health: String!
+  matchById(id: String!): Match
+  matches: [Match!]!
   news: [News!]!
   newsById(id: String!): News!
   playerById(id: String!): Player!
@@ -113,6 +127,15 @@ type Team {
   id: ID!
   name: String!
   players: [Player!]
+}
+
+input UpdateMatchDto {
+  date: Date
+  firstOpponentId: String
+  score1: Int
+  score2: Int
+  secondOpponentId: String
+  status: MatchStatus
 }
 
 input UpdateNewsDto {

@@ -1,0 +1,40 @@
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsDate, IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import { MatchStatus } from '../enums/match-status.enum';
+
+@InputType()
+export class UpdateMatchDto {
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  @IsUUID('all')
+  firstOpponentId?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsString()
+  @IsUUID('all')
+  secondOpponentId?: string;
+
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
+  @IsDate()
+  date?: Date;
+
+  @Field(() => MatchStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(MatchStatus)
+  status?: MatchStatus;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  score1?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  score2?: number | null;
+}

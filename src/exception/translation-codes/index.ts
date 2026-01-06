@@ -5,6 +5,7 @@ export * from '../translation-codes.constants';
 export * from './team-registration-link.translation-codes';
 export * from './athlete.translation-codes';
 export * from './team.translation-codes';
+export * from './match.translation-codes';
 export * from './user.translation-codes';
 export * from './health-factor.translation-codes';
 export * from './terra.translation-codes';

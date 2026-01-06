@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Team } from '../../team/entities/team.entity';
 import { MatchStatus } from '../enums/match-status.enum';
 
@@ -27,4 +27,12 @@ export class Match {
   @Field(() => MatchStatus)
   @Column({ name: 'status', type: 'enum', enum: MatchStatus, nullable: false })
   status: MatchStatus;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ name: 'score1', type: 'integer', nullable: true })
+  score1?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ name: 'score2', type: 'integer', nullable: true })
+  score2?: number | null;
 }
