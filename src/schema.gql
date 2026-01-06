@@ -57,7 +57,11 @@ type Mutation {
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
   deleteNews(id: String!): News!
+  deletePlayer(id: String!): Player!
+  deleteTeam(id: String!): Team!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
+  updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
+  updateTeam(id: String!, updateTeamDto: UpdateTeamDto!): Team!
 }
 
 type News {
@@ -116,4 +120,20 @@ input UpdateNewsDto {
   content: String
   imageUrl: String
   title: String
+}
+
+input UpdatePlayerDto {
+  firstName: String
+  height: Float
+  imageUrl: String
+  lastName: String
+  position: PlayerPosition
+  prefferedFoot: PreferredFoot
+  teamId: String
+  weight: Float
+  yearOfBirth: Float
+}
+
+input UpdateTeamDto {
+  name: String
 }

@@ -4,6 +4,7 @@ import { Team } from './entities/team.entity';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { Player } from '../player/entities/player.entity';
 import { PlayerService } from '../player/player.service';
+import { UpdateTeamDto } from './dto/update-team.dto';
 
 @Resolver(() => Team)
 export class TeamResolver {
@@ -40,5 +41,18 @@ export class TeamResolver {
   @Mutation(() => Team, { name: 'createTeam' })
   async createTeam(@Args('createTeamDto', { type: () => CreateTeamDto }) createTeamDto: CreateTeamDto): Promise<Team> {
     return await this.teamService.createTeam(createTeamDto);
+  }
+
+  @Mutation(() => Team, { name: 'updateTeam' })
+  async updateTeam(
+    @Args('id', { type: () => String }) id: string,
+    @Args('updateTeamDto', { type: () => UpdateTeamDto }) updateTeamDto: UpdateTeamDto,
+  ): Promise<Team> {
+    return await this.teamService.updateTeam(id, updateTeamDto);
+  }
+
+  @Mutation(() => Team, { name: 'deleteTeam' })
+  async deleteTeam(@Args('id', { type: () => String }) id: string): Promise<Team> {
+    return await this.teamService.deleteTeam(id);
   }
 }

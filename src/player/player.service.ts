@@ -8,6 +8,7 @@ import { CreatePlayerDto } from './dto/create-player.dto';
 import { InternalServerError } from '../exception/exceptions';
 import { generateUuidv7 } from '../shared/utils';
 import { TeamService } from '../team/team.service';
+import { UpdatePlayerDto } from './dto/update-player.dto';
 
 @Injectable()
 export class PlayerService {
@@ -58,5 +59,24 @@ export class PlayerService {
     } catch {
       throw new InternalServerError(PLAYER_TRANSLATION_CODES.playerCreationFailed);
     }
+  }
+
+  async updatePlayer(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
+    const player = await this.getPlayerById(id);
+
+    const { teamId, ...patch } = updatePlayerDto;
+    Object.assign(player, patch);
+
+    if (teamId) {
+      player.team = await this.teamService.getTeamById(teamId);
+    }
+
+    return await this.playerRepository.save(player);
+  }
+
+  async deletePlayer(id: string): Promise<Player> {
+    const player = await this.getPlayerById(id);
+    await this.playerRepository.remove(player);
+    return { ...player, id };
   }
 }

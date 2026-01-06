@@ -7,6 +7,7 @@ import { TEAM_TRANSLATION_CODES } from '../exception/translation-codes';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { generateUuidv7 } from '../shared/utils';
 import { InternalServerError } from '../exception/exceptions';
+import { UpdateTeamDto } from './dto/update-team.dto';
 
 @Injectable()
 export class TeamService {
@@ -59,5 +60,25 @@ export class TeamService {
     } catch {
       throw new InternalServerError(TEAM_TRANSLATION_CODES.teamCreationFailed);
     }
+  }
+
+  async updateTeam(id: string, updateTeamDto: UpdateTeamDto): Promise<Team> {
+    const team = await this.getTeamById(id);
+
+    if (updateTeamDto.name && updateTeamDto.name !== team.name) {
+      const existingTeam = await this.teamRepository.findOne({ where: { name: updateTeamDto.name } });
+      if (existingTeam && existingTeam.id !== id) {
+        throw new ConflictError(TEAM_TRANSLATION_CODES.teamNameAlreadyExists);
+      }
+    }
+
+    Object.assign(team, updateTeamDto);
+    return await this.teamRepository.save(team);
+  }
+
+  async deleteTeam(id: string): Promise<Team> {
+    const team = await this.getTeamById(id);
+    await this.teamRepository.remove(team);
+    return { ...team, id };
   }
 }
