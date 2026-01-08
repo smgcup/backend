@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
 import { Match } from '../../match/entities/match.entity';
@@ -50,6 +50,6 @@ export class MatchEvent {
   payload: Record<string, any> | null;
 
   @Field(() => Date)
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @Column({ name: 'created_at', type: 'timestamp', nullable: false })
   createdAt: Date;
 }
