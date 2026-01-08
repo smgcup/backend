@@ -165,7 +165,7 @@ type Team {
   createdAt: Date!
   id: ID!
   name: String!
-  players: [Player!]
+  players: [Player!]!
 }
 
 input UpdateMatchDto {

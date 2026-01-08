@@ -3,21 +3,20 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MatchEvent } from './entities/match-event.entity';
 import { CreateMatchEventDto } from './dto/create-match-event.dto';
-import { Match } from '../match/entities/match.entity';
 import { Player } from '../player/entities/player.entity';
 import { BadRequestError, InternalServerError, NotFoundError } from '../exception/exceptions';
 import { MATCH_EVENT_TRANSLATION_CODES } from '../exception/translation-codes';
 import { MatchEventType } from './enums/match-event-type.enum';
 import { PlayerService } from '../player/player.service';
 import { TeamService } from '../team/team.service';
+import { MatchService } from '../match/match.service';
 
 @Injectable()
 export class MatchEventService {
   constructor(
     @InjectRepository(MatchEvent)
     private readonly matchEventRepository: Repository<MatchEvent>,
-    @InjectRepository(Match)
-    private readonly matchRepository: Repository<Match>,
+    private readonly matchService: MatchService,
     private readonly playerService: PlayerService,
     private readonly teamService: TeamService,
   ) {}
@@ -35,13 +34,7 @@ export class MatchEventService {
   }
 
   async createMatchEvent(createMatchEventDto: CreateMatchEventDto): Promise<MatchEvent> {
-    const match = await this.matchRepository.findOne({
-      where: { id: createMatchEventDto.matchId },
-      relations: { firstOpponent: true, secondOpponent: true },
-    });
-    if (!match) {
-      throw new NotFoundError(MATCH_EVENT_TRANSLATION_CODES.matchNotFound);
-    }
+    const match = await this.matchService.getMatchById(createMatchEventDto.matchId);
 
     const team = await this.teamService.getTeamById(createMatchEventDto.teamId);
 
@@ -83,10 +76,10 @@ export class MatchEventService {
     }
   }
 
-  async deleteMatchEvent(id: MatchEvent['id']): Promise<MatchEvent> {
+  async deleteMatchEvent(id: MatchEvent['id']) {
     const event = await this.getMatchEventById(id);
     await this.matchEventRepository.remove(event);
-    return { ...event, id };
+    return id;
   }
 
   private async getMatchEventById(id: MatchEvent['id']): Promise<MatchEvent> {

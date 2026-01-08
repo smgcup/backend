@@ -20,7 +20,7 @@ export class MatchEventResolver {
   }
 
   @Mutation(() => MatchEvent, { name: 'deleteMatchEvent' })
-  async deleteMatchEvent(@Args('id', { type: () => String }) id: string): Promise<MatchEvent> {
+  async deleteMatchEvent(@Args('id', { type: () => String }) id: string) {
     return await this.matchEventService.deleteMatchEvent(id);
   }
 }

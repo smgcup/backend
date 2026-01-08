@@ -3,12 +3,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MatchEvent } from './entities/match-event.entity';
 import { MatchEventService } from './match-event.service';
 import { MatchEventResolver } from './match-event.resolver';
-import { Match } from '../match/entities/match.entity';
 import { PlayerModule } from '../player/player.module';
 import { TeamModule } from '../team/team.module';
+import { MatchModule } from '../match/match.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MatchEvent, Match]), PlayerModule, TeamModule],
+  imports: [TypeOrmModule.forFeature([MatchEvent]), PlayerModule, TeamModule, MatchModule],
   providers: [MatchEventService, MatchEventResolver],
   exports: [MatchEventService],
 })
