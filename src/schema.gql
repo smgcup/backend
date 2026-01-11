@@ -35,7 +35,7 @@ input CreatePlayerDto {
   imageUrl: String
   lastName: String!
   position: PlayerPosition!
-  prefferedFoot: PreferredFoot!
+  preferredFoot: PreferredFoot!
   teamId: String!
   weight: Float!
   yearOfBirth: Float!
@@ -130,7 +130,7 @@ type Player {
   imageUrl: String
   lastName: String!
   position: PlayerPosition!
-  prefferedFoot: PreferredFoot!
+  preferredFoot: PreferredFoot!
   team: Team!
   weight: Float!
   yearOfBirth: Float!
@@ -190,7 +190,7 @@ input UpdatePlayerDto {
   imageUrl: String
   lastName: String
   position: PlayerPosition
-  prefferedFoot: PreferredFoot
+  preferredFoot: PreferredFoot
   teamId: String
   weight: Float
   yearOfBirth: Float

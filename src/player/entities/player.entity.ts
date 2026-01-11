@@ -32,8 +32,8 @@ export class Player {
   weight: number;
 
   @Field(() => PreferredFoot)
-  @Column({ name: 'preffered_foot', type: 'enum', enum: PreferredFoot, nullable: false })
-  prefferedFoot: PreferredFoot;
+  @Column({ name: 'preferred_foot', type: 'enum', enum: PreferredFoot, nullable: false })
+  preferredFoot: PreferredFoot;
 
   @Field(() => PlayerPosition)
   @Column({ name: 'position', type: 'enum', enum: PlayerPosition, nullable: false })

@@ -42,7 +42,7 @@ export class UpdatePlayerDto {
   @Field(() => PreferredFoot, { nullable: true })
   @IsOptional()
   @IsEnum(PreferredFoot)
-  prefferedFoot?: PreferredFoot;
+  preferredFoot?: PreferredFoot;
 
   @Field(() => PlayerPosition, { nullable: true })
   @IsOptional()

@@ -42,7 +42,7 @@ export class CreatePlayerDto {
   @Field(() => PreferredFoot)
   @IsNotEmpty()
   @IsEnum(PreferredFoot)
-  prefferedFoot: PreferredFoot;
+  preferredFoot: PreferredFoot;
 
   @Field(() => PlayerPosition)
   @IsNotEmpty()
