@@ -13,6 +13,15 @@ input CreateMatchDto {
   status: MatchStatus!
 }
 
+input CreateMatchEventDto {
+  matchId: String!
+  minute: Int!
+  payload: JSON
+  playerId: String
+  teamId: String!
+  type: MatchEventType!
+}
+
 input CreateNewsDto {
   category: String!
   content: String!
@@ -26,7 +35,7 @@ input CreatePlayerDto {
   imageUrl: String
   lastName: String!
   position: PlayerPosition!
-  prefferedFoot: PreferredFoot!
+  preferredFoot: PreferredFoot!
   teamId: String!
   weight: Float!
   yearOfBirth: Float!
@@ -42,6 +51,11 @@ scalar Date
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
 type Match {
   date: Date!
   firstOpponent: Team!
@@ -50,6 +64,28 @@ type Match {
   score2: Int
   secondOpponent: Team!
   status: MatchStatus!
+}
+
+type MatchEvent {
+  createdAt: Date!
+  id: ID!
+  match: Match!
+  minute: Float!
+  payload: JSON
+  player: Player
+  team: Team!
+  type: MatchEventType!
+}
+
+enum MatchEventType {
+  FULL_TIME
+  GOAL
+  GOALKEEPER_SAVE
+  HALF_TIME
+  PENALTY_MISSED
+  PENALTY_SCORED
+  RED_CARD
+  YELLOW_CARD
 }
 
 enum MatchStatus {
@@ -63,10 +99,12 @@ type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   adminLogout: AdminLoginResult!
   createMatch(createMatchDto: CreateMatchDto!): Match!
+  createMatchEvent(createMatchEventDto: CreateMatchEventDto!): MatchEvent!
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
   deleteMatch(id: String!): Match!
+  deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
   deletePlayer(id: String!): Player!
   deleteTeam(id: String!): Team!
@@ -92,7 +130,7 @@ type Player {
   imageUrl: String
   lastName: String!
   position: PlayerPosition!
-  prefferedFoot: PreferredFoot!
+  preferredFoot: PreferredFoot!
   team: Team!
   weight: Float!
   yearOfBirth: Float!
@@ -114,6 +152,7 @@ enum PreferredFoot {
 type Query {
   health: String!
   matchById(id: String!): Match
+  matchEvents(matchId: String!): [MatchEvent!]!
   matches: [Match!]!
   news: [News!]!
   newsById(id: String!): News!
@@ -126,7 +165,7 @@ type Team {
   createdAt: Date!
   id: ID!
   name: String!
-  players: [Player!]
+  players: [Player!]!
 }
 
 input UpdateMatchDto {
@@ -151,7 +190,7 @@ input UpdatePlayerDto {
   imageUrl: String
   lastName: String
   position: PlayerPosition
-  prefferedFoot: PreferredFoot
+  preferredFoot: PreferredFoot
   teamId: String
   weight: Float
   yearOfBirth: Float

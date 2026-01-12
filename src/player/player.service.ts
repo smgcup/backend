@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { Player } from './entities/player.entity';
 import { PLAYER_TRANSLATION_CODES } from '../exception/translation-codes';
 import { NotFoundError } from '../exception/exceptions';
@@ -21,10 +21,11 @@ export class PlayerService {
   /**
    * Method to get a player by its ID
    * @param id - The ID of the player to get
+   * @param options - Additional find options (except where)
    * @returns The player with the given ID
    */
-  async getPlayerById(id: string): Promise<Player> {
-    const player = await this.playerRepository.findOne({ where: { id } });
+  async getPlayerById(id: string, options: Omit<FindOneOptions<Player>, 'where'> = {}): Promise<Player> {
+    const player = await this.playerRepository.findOne({ ...options, where: { id } });
     if (!player) {
       throw new NotFoundError(PLAYER_TRANSLATION_CODES.playerNotFound);
     }

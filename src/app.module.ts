@@ -12,6 +12,7 @@ import { PlayerModule } from './player/player.module';
 import { AdminModule } from './admin/admin.module';
 import { MatchModule } from './match/match.module';
 import { NewsModule } from './news/news.module';
+import { MatchEventModule } from './match-event/match-event.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { NewsModule } from './news/news.module';
     PlayerModule,
     AdminModule,
     MatchModule,
+    MatchEventModule,
     NewsModule,
   ],
   controllers: [AppController],

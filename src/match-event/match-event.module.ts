@@ -1,8 +1,15 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MatchEvent } from './entities/match-event.entity';
+import { MatchEventService } from './match-event.service';
+import { MatchEventResolver } from './match-event.resolver';
+import { PlayerModule } from '../player/player.module';
+import { TeamModule } from '../team/team.module';
+import { MatchModule } from '../match/match.module';
 
 @Module({
-  imports: [],
-  providers: [],
-  exports: [],
+  imports: [TypeOrmModule.forFeature([MatchEvent]), PlayerModule, TeamModule, MatchModule],
+  providers: [MatchEventService, MatchEventResolver],
+  exports: [MatchEventService],
 })
 export class MatchEventModule {}

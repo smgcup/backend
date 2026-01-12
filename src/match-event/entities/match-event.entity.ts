@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import GraphQLJSON from 'graphql-type-json';
 import { Match } from '../../match/entities/match.entity';
 import { Team } from '../../team/entities/team.entity';
 import { Player } from '../../player/entities/player.entity';
@@ -44,10 +45,11 @@ export class MatchEvent {
   @Column({ type: 'int' })
   minute: number;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => GraphQLJSON, { nullable: true })
   @Column({ type: 'jsonb', nullable: true })
-  payload: Record<string, any>;
+  payload: Record<string, any> | null;
 
-  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  @Field(() => Date)
+  @Column({ name: 'created_at', type: 'timestamp', nullable: false })
   createdAt: Date;
 }

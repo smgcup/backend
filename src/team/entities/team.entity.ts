@@ -13,7 +13,7 @@ export class Team {
   @Column({ name: 'name', type: 'text', nullable: false })
   name: string;
 
-  @Field(() => [Player], { nullable: true })
+  @Field(() => [Player])
   @OneToMany(() => Player, (player) => player.team)
   players: Player[];
 
