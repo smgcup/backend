@@ -48,7 +48,7 @@ export class Player {
   @JoinColumn({ name: 'team_id' })
   team: Team;
 
-  @Field(() => Date, { nullable: true })
-  @Column({ name: 'date_of_birth', type: 'date', nullable: true })
+  @Field(() => Date, { nullable: false })
+  @Column({ name: 'date_of_birth', type: 'date', nullable: false })
   dateOfBirth: Date;
 }
