@@ -21,11 +21,6 @@ export class UpdatePlayerDto {
 
   @Field({ nullable: true })
   @IsOptional()
-  @IsNumber()
-  yearOfBirth?: number;
-
-  @Field({ nullable: true })
-  @IsOptional()
   @IsDate()
   dateOfBirth?: Date;
 

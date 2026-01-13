@@ -39,7 +39,6 @@ input CreatePlayerDto {
   preferredFoot: PreferredFoot!
   teamId: String!
   weight: Float!
-  yearOfBirth: Float!
 }
 
 input CreateTeamDto {
@@ -135,7 +134,6 @@ type Player {
   preferredFoot: PreferredFoot!
   team: Team!
   weight: Float!
-  yearOfBirth: Float!
 }
 
 enum PlayerPosition {
@@ -196,7 +194,6 @@ input UpdatePlayerDto {
   preferredFoot: PreferredFoot
   teamId: String
   weight: Float
-  yearOfBirth: Float
 }
 
 input UpdateTeamDto {

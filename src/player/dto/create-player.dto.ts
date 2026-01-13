@@ -31,11 +31,6 @@ export class CreatePlayerDto {
 
   @Field()
   @IsNotEmpty()
-  @IsNumber()
-  yearOfBirth: number;
-
-  @Field()
-  @IsNotEmpty()
   @IsDate()
   dateOfBirth: Date;
 

@@ -20,10 +20,6 @@ export class Player {
   lastName: string;
 
   @Field(() => Number)
-  @Column({ name: 'year_of_birth', type: 'integer', nullable: false })
-  yearOfBirth: number;
-
-  @Field(() => Number)
   @Column({ name: 'height', type: 'integer', nullable: false })
   height: number;
 
