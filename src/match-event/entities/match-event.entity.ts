@@ -50,6 +50,6 @@ export class MatchEvent {
   payload: Record<string, any> | null;
 
   @Field(() => Date)
-  @Column({ name: 'created_at', type: 'timestamp', nullable: true })
+  @Column({ name: 'created_at', type: 'timestamp', nullable: false })
   createdAt: Date;
 }
