@@ -13,9 +13,9 @@ export class MatchResolver {
     return await this.matchService.getMatches();
   }
 
-  @Query(() => Match, { name: 'matchById', nullable: true })
-  async matchById(@Args('id', { type: () => String }) id: string): Promise<Match | null> {
-    return await this.matchService.findMatchById(id);
+  @Query(() => Match, { name: 'matchById', nullable: false })
+  async matchById(@Args('id', { type: () => String }) id: string): Promise<Match> {
+    return await this.matchService.getMatchById(id);
   }
 
   @Mutation(() => Match, { name: 'createMatch' })
