@@ -48,7 +48,8 @@ export class Player {
   @Column({ name: 'date_of_birth', type: 'date', nullable: false })
   dateOfBirth: Date;
 
-  getAge(): number {
+  @Field(() => Number, { nullable: false })
+  get age(): number {
     const today = new Date();
     const birthDate = new Date(this.dateOfBirth);
 

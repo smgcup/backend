@@ -124,6 +124,7 @@ type News {
 }
 
 type Player {
+  age: Float!
   dateOfBirth: Date!
   firstName: String!
   height: Float!
