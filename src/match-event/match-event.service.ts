@@ -10,6 +10,7 @@ import { MatchEventType } from './enums/match-event-type.enum';
 import { PlayerService } from '../player/player.service';
 import { TeamService } from '../team/team.service';
 import { MatchService } from '../match/match.service';
+import { generateUuidv7 } from '../shared/utils';
 
 @Injectable()
 export class MatchEventService {
@@ -57,21 +58,33 @@ export class MatchEventService {
       }
     }
 
+    const assistPlayer =
+      createMatchEventDto.type === MatchEventType.GOAL && createMatchEventDto.assistPlayerId
+        ? await this.playerService.getPlayerById(createMatchEventDto.assistPlayerId, {
+            relations: { team: true },
+          })
+        : null;
+
+    if (assistPlayer && player && assistPlayer?.team?.id !== player?.team?.id) {
+      throw new BadRequestError(MATCH_EVENT_TRANSLATION_CODES.playerNotInTeam);
+    }
+
     try {
       const created = this.matchEventRepository.create({
-        matchId: match.id,
+        id: generateUuidv7(),
         match,
-        teamId: team.id,
         team,
-        playerId: player?.id ?? null,
         player,
+        assistPlayer,
         type: createMatchEventDto.type,
         minute: createMatchEventDto.minute,
-        payload: createMatchEventDto.payload ?? null,
+        createdAt: new Date(),
       });
 
       return await this.matchEventRepository.save(created);
-    } catch {
+    } catch (error) {
+      console.error(error);
+
       throw new InternalServerError(MATCH_EVENT_TRANSLATION_CODES.matchEventCreationFailed);
     }
   }

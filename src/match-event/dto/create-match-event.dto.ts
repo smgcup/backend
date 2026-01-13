@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsEnum, IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
+
 import { MatchEventType } from '../enums/match-event-type.enum';
 
 @InputType()
@@ -18,6 +18,11 @@ export class CreateMatchEventDto {
   @IsUUID()
   playerId?: string | null;
 
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  assistPlayerId?: string | null;
+
   @Field(() => MatchEventType)
   @IsEnum(MatchEventType)
   type: MatchEventType;
@@ -27,8 +32,4 @@ export class CreateMatchEventDto {
   @Min(0)
   @Max(200)
   minute: number;
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  @IsOptional()
-  payload?: Record<string, any> | null;
 }

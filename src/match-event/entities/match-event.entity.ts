@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
-import GraphQLJSON from 'graphql-type-json';
 import { Match } from '../../match/entities/match.entity';
 import { Team } from '../../team/entities/team.entity';
 import { Player } from '../../player/entities/player.entity';
@@ -10,7 +9,7 @@ import { MatchEventType } from '../enums/match-event-type.enum';
 @Entity({ name: 'match_event' })
 export class MatchEvent {
   @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ name: 'id', type: 'uuid', nullable: false })
   id: string;
 
   @Column({ name: 'match_id', type: 'uuid' })
@@ -37,6 +36,15 @@ export class MatchEvent {
   @JoinColumn({ name: 'player_id' })
   player: Player | null;
 
+  @Field(() => String, { nullable: true })
+  @Column({ name: 'assist_player_id', type: 'uuid', nullable: true })
+  assistPlayerId?: string | null;
+
+  @Field(() => Player, { nullable: true })
+  @ManyToOne(() => Player, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'assist_player_id' })
+  assistPlayer: Player | null;
+
   @Field(() => MatchEventType)
   @Column({ type: 'enum', enum: MatchEventType })
   type: MatchEventType;
@@ -44,10 +52,6 @@ export class MatchEvent {
   @Field(() => Number)
   @Column({ type: 'int' })
   minute: number;
-
-  @Field(() => GraphQLJSON, { nullable: true })
-  @Column({ type: 'jsonb', nullable: true })
-  payload: Record<string, any> | null;
 
   @Field(() => Date)
   @Column({ name: 'created_at', type: 'timestamp', nullable: false })
