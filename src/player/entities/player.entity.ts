@@ -47,4 +47,21 @@ export class Player {
   @Field(() => Date, { nullable: false })
   @Column({ name: 'date_of_birth', type: 'date', nullable: false })
   dateOfBirth: Date;
+
+  getAge(): number {
+    const today = new Date();
+    const birthDate = new Date(this.dateOfBirth);
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const hasHadBirthdayThisYear =
+      today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+    if (!hasHadBirthdayThisYear) {
+      age--;
+    }
+
+    return age;
+  }
 }
