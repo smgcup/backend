@@ -47,4 +47,8 @@ export class Player {
   @ManyToOne(() => Team, (team) => team.id, { nullable: false })
   @JoinColumn({ name: 'team_id' })
   team: Team;
+
+  @Field(() => Date, { nullable: true })
+  @Column({ name: 'date_of_birth', type: 'date', nullable: true })
+  dateOfBirth: Date;
 }

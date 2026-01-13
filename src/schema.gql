@@ -124,6 +124,7 @@ type News {
 }
 
 type Player {
+  dateOfBirth: Date
   firstName: String!
   height: Float!
   id: ID!
