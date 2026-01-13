@@ -1,5 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, IsEnum, MaxLength, MinLength } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  IsEnum,
+  MaxLength,
+  MinLength,
+  IsDate,
+} from 'class-validator';
 import { PreferredFoot } from '../enums/preferred-foot.enum';
 import { PlayerPosition } from '../enums/player-position.enum';
 
@@ -21,8 +31,8 @@ export class CreatePlayerDto {
 
   @Field()
   @IsNotEmpty()
-  @IsNumber()
-  yearOfBirth: number;
+  @IsDate()
+  dateOfBirth: Date;
 
   @Field()
   @IsNotEmpty()

@@ -30,6 +30,7 @@ input CreateNewsDto {
 }
 
 input CreatePlayerDto {
+  dateOfBirth: Date!
   firstName: String!
   height: Float!
   imageUrl: String
@@ -38,7 +39,6 @@ input CreatePlayerDto {
   preferredFoot: PreferredFoot!
   teamId: String!
   weight: Float!
-  yearOfBirth: Float!
 }
 
 input CreateTeamDto {
@@ -124,6 +124,8 @@ type News {
 }
 
 type Player {
+  age: Float!
+  dateOfBirth: Date!
   firstName: String!
   height: Float!
   id: ID!
@@ -133,7 +135,6 @@ type Player {
   preferredFoot: PreferredFoot!
   team: Team!
   weight: Float!
-  yearOfBirth: Float!
 }
 
 enum PlayerPosition {
@@ -185,6 +186,7 @@ input UpdateNewsDto {
 }
 
 input UpdatePlayerDto {
+  dateOfBirth: Date
   firstName: String
   height: Float
   imageUrl: String
@@ -193,7 +195,6 @@ input UpdatePlayerDto {
   preferredFoot: PreferredFoot
   teamId: String
   weight: Float
-  yearOfBirth: Float
 }
 
 input UpdateTeamDto {

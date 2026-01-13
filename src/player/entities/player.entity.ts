@@ -20,10 +20,6 @@ export class Player {
   lastName: string;
 
   @Field(() => Number)
-  @Column({ name: 'year_of_birth', type: 'integer', nullable: false })
-  yearOfBirth: number;
-
-  @Field(() => Number)
   @Column({ name: 'height', type: 'integer', nullable: false })
   height: number;
 
@@ -47,4 +43,26 @@ export class Player {
   @ManyToOne(() => Team, (team) => team.id, { nullable: false })
   @JoinColumn({ name: 'team_id' })
   team: Team;
+
+  @Field(() => Date, { nullable: false })
+  @Column({ name: 'date_of_birth', type: 'date', nullable: false })
+  dateOfBirth: Date;
+
+  @Field(() => Number, { nullable: false })
+  get age(): number {
+    const today = new Date();
+    const birthDate = new Date(this.dateOfBirth);
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    const hasHadBirthdayThisYear =
+      today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+    if (!hasHadBirthdayThisYear) {
+      age--;
+    }
+
+    return age;
+  }
 }
