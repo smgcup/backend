@@ -78,6 +78,6 @@ export class PlayerService {
   async deletePlayer(id: string): Promise<Player> {
     const player = await this.getPlayerById(id);
     await this.playerRepository.remove(player);
-    return { ...player, id };
+    return player;
   }
 }
