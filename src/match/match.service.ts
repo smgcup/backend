@@ -37,13 +37,6 @@ export class MatchService {
     return match;
   }
 
-  async findMatchById(id: string): Promise<Match | null> {
-    return await this.matchRepository.findOne({
-      where: { id },
-      relations: { firstOpponent: true, secondOpponent: true },
-    });
-  }
-
   async createMatch(createMatchDto: CreateMatchDto): Promise<Match> {
     this.assertValidDate(createMatchDto.date);
     await this.assertOpponentsExist(createMatchDto.firstOpponentId, createMatchDto.secondOpponentId);

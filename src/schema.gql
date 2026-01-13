@@ -151,7 +151,7 @@ enum PreferredFoot {
 
 type Query {
   health: String!
-  matchById(id: String!): Match
+  matchById(id: String!): Match!
   matchEvents(matchId: String!): [MatchEvent!]!
   matches: [Match!]!
   news: [News!]!
