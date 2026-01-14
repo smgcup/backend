@@ -22,27 +22,19 @@ export class MatchEventService {
     private readonly teamService: TeamService,
   ) {}
 
-  async getMatchEventsByMatchId(matchId: string): Promise<MatchEvent[]> {
+  async getMatchEventsByMatchId(matchId: string) {
     return await this.matchEventRepository.find({
       where: { matchId },
       relations: {
         match: { firstOpponent: true, secondOpponent: true },
-        team: true,
         player: { team: true },
       },
       order: { minute: 'ASC', createdAt: 'ASC' },
     });
   }
 
-  async createMatchEvent(createMatchEventDto: CreateMatchEventDto): Promise<MatchEvent> {
+  async createMatchEvent(createMatchEventDto: CreateMatchEventDto) {
     const match = await this.matchService.getMatchById(createMatchEventDto.matchId);
-
-    const team = await this.teamService.getTeamById(createMatchEventDto.teamId);
-
-    const isTeamInMatch = team.id === match.firstOpponent.id || team.id === match.secondOpponent.id;
-    if (!isTeamInMatch) {
-      throw new BadRequestError(MATCH_EVENT_TRANSLATION_CODES.teamNotInMatch);
-    }
 
     const isMarker =
       createMatchEventDto.type === MatchEventType.HALF_TIME || createMatchEventDto.type === MatchEventType.FULL_TIME;
@@ -50,11 +42,14 @@ export class MatchEventService {
       throw new BadRequestError(MATCH_EVENT_TRANSLATION_CODES.markerEventCannotHavePlayer);
     }
 
-    let player: Player | null = null;
-    if (createMatchEventDto.playerId) {
-      player = await this.playerService.getPlayerById(createMatchEventDto.playerId, { relations: { team: true } });
-      if (player.team?.id !== team.id) {
-        throw new BadRequestError(MATCH_EVENT_TRANSLATION_CODES.playerNotInTeam);
+    const player = createMatchEventDto.playerId
+      ? await this.playerService.getPlayerById(createMatchEventDto.playerId, { relations: { team: true } })
+      : null;
+
+    if (player) {
+      const isPlayerInMatch = player.team.id === match.firstOpponent.id || player.team.id === match.secondOpponent.id;
+      if (!isPlayerInMatch) {
+        throw new BadRequestError(MATCH_EVENT_TRANSLATION_CODES.playerNotInMatch);
       }
     }
 
@@ -73,7 +68,6 @@ export class MatchEventService {
       const created = this.matchEventRepository.create({
         id: generateUuidv7(),
         match,
-        team,
         player,
         assistPlayer,
         type: createMatchEventDto.type,
@@ -95,12 +89,12 @@ export class MatchEventService {
     return id;
   }
 
-  private async getMatchEventById(id: MatchEvent['id']): Promise<MatchEvent> {
+  private async getMatchEventById(id: MatchEvent['id']) {
     const event = await this.matchEventRepository.findOne({
       where: { id },
       relations: {
         match: { firstOpponent: true, secondOpponent: true },
-        team: true,
+
         player: { team: true },
       },
     });

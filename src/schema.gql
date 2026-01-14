@@ -69,7 +69,6 @@ type MatchEvent {
   match: Match!
   minute: Float!
   player: Player
-  team: Team!
   type: MatchEventType!
 }
 

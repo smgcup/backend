@@ -20,14 +20,6 @@ export class MatchEvent {
   @JoinColumn({ name: 'match_id' })
   match: Match;
 
-  @Column({ name: 'team_id', type: 'uuid' })
-  teamId: string;
-
-  @Field(() => Team)
-  @ManyToOne(() => Team, { onDelete: 'RESTRICT' })
-  @JoinColumn({ name: 'team_id' })
-  team: Team;
-
   @Column({ name: 'player_id', type: 'uuid', nullable: true })
   playerId: string | null;
 
