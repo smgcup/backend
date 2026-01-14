@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MatchEvent } from './entities/match-event.entity';
 import { CreateMatchEventDto } from './dto/create-match-event.dto';
-import { Player } from '../player/entities/player.entity';
 import { BadRequestError, InternalServerError, NotFoundError } from '../exception/exceptions';
 import { MATCH_EVENT_TRANSLATION_CODES } from '../exception/translation-codes';
 import { MatchEventType } from './enums/match-event-type.enum';
