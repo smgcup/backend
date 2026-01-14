@@ -5,6 +5,7 @@ export const MATCH_EVENT_TRANSLATION_CODES = {
   teamNotInMatch: 'teamNotInMatch',
   playerNotFound: 'playerNotFound',
   playerNotInTeam: 'playerNotInTeam',
+  playerNotInMatch: 'playerNotInMatch',
   markerEventCannotHavePlayer: 'markerEventCannotHavePlayer',
   matchEventCreationFailed: 'matchEventCreationFailed',
 } as const;
