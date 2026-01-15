@@ -1,7 +1,6 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Match } from '../../match/entities/match.entity';
-import { Team } from '../../team/entities/team.entity';
 import { Player } from '../../player/entities/player.entity';
 import { MatchEventType } from '../enums/match-event-type.enum';
 
