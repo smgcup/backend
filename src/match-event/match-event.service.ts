@@ -27,6 +27,7 @@ export class MatchEventService {
       relations: {
         match: { firstOpponent: true, secondOpponent: true },
         player: { team: true },
+        assistPlayer: { team: true },
       },
       order: { minute: 'ASC', createdAt: 'ASC' },
     });
@@ -93,8 +94,8 @@ export class MatchEventService {
       where: { id },
       relations: {
         match: { firstOpponent: true, secondOpponent: true },
-
         player: { team: true },
+        assistPlayer: { team: true },
       },
     });
     if (!event) {
