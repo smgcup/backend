@@ -10,12 +10,16 @@ import { PlayerService } from '../player/player.service';
 import { TeamService } from '../team/team.service';
 import { MatchService } from '../match/match.service';
 import { generateUuidv7 } from '../shared/utils';
+import { Match } from '../match/entities/match.entity';
+import { MatchStatus } from '../match/enums/match-status.enum';
 
 @Injectable()
 export class MatchEventService {
   constructor(
     @InjectRepository(MatchEvent)
     private readonly matchEventRepository: Repository<MatchEvent>,
+    @InjectRepository(Match)
+    private readonly matchRepository: Repository<Match>,
     private readonly matchService: MatchService,
     private readonly playerService: PlayerService,
     private readonly teamService: TeamService,
@@ -75,7 +79,15 @@ export class MatchEventService {
         createdAt: new Date(),
       });
 
-      return await this.matchEventRepository.save(created);
+      const savedEvent = await this.matchEventRepository.save(created);
+
+      // If the event is FULL_TIME, update match status to FINISHED
+      if (createMatchEventDto.type === MatchEventType.FULL_TIME) {
+        match.status = MatchStatus.FINISHED;
+        await this.matchRepository.save(match);
+      }
+
+      return savedEvent;
     } catch (error) {
       console.error(error);
 
