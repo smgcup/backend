@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { Team } from './entities/team.entity';
 import { ConflictError, NotFoundError } from '../exception/exceptions';
 import { TEAM_TRANSLATION_CODES } from '../exception/translation-codes';
@@ -8,21 +8,25 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { generateUuidv7 } from '../shared/utils';
 import { InternalServerError } from '../exception/exceptions';
 import { UpdateTeamDto } from './dto/update-team.dto';
+import { PlayerService } from '../player/player.service';
 
 @Injectable()
 export class TeamService {
   constructor(
     @InjectRepository(Team)
     private teamRepository: Repository<Team>,
+    @Inject(forwardRef(() => PlayerService))
+    private playerService: PlayerService,
   ) {}
 
   /**
    * Method to get a team by its ID
    * @param id - The ID of the team to get
+   * @param options - Additional find options (except where)
    * @returns The team with the given ID
    */
-  async getTeamById(id: string): Promise<Team> {
-    const team = await this.teamRepository.findOne({ where: { id } });
+  async getTeamById(id: string, options: Omit<FindOneOptions<Team>, 'where'> = {}): Promise<Team> {
+    const team = await this.teamRepository.findOne({ ...options, where: { id } });
     if (!team) {
       throw new NotFoundError(TEAM_TRANSLATION_CODES.teamNotFound);
     }
@@ -63,7 +67,7 @@ export class TeamService {
   }
 
   async updateTeam(id: string, updateTeamDto: UpdateTeamDto): Promise<Team> {
-    const team = await this.getTeamById(id);
+    const team = await this.getTeamById(id, { relations: { captain: true } });
 
     if (updateTeamDto.name && updateTeamDto.name !== team.name) {
       const existingTeam = await this.teamRepository.findOne({ where: { name: updateTeamDto.name } });
@@ -72,7 +76,17 @@ export class TeamService {
       }
     }
 
-    Object.assign(team, updateTeamDto);
+    const { captainId, ...patch } = updateTeamDto;
+    Object.assign(team, patch);
+
+    if (captainId) {
+      const player = await this.playerService.getPlayerById(captainId, { relations: { team: true } });
+      if (player.team?.id !== team.id) {
+        throw new ConflictError(TEAM_TRANSLATION_CODES.captainMustBelongToTeam);
+      }
+      team.captain = player;
+    }
+
     return await this.teamRepository.save(team);
   }
 

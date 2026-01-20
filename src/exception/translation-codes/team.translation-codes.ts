@@ -6,4 +6,6 @@ export const TEAM_TRANSLATION_CODES = {
   // Creation Failed
   teamCreationFailed: 'teamCreationFailed',
   teamNameAlreadyExists: 'teamNameAlreadyExists',
+  // Validation / Conflicts
+  captainMustBelongToTeam: 'captainMustBelongToTeam',
 } as const;
