@@ -6,9 +6,10 @@ import { MatchEventResolver } from './match-event.resolver';
 import { PlayerModule } from '../player/player.module';
 import { TeamModule } from '../team/team.module';
 import { MatchModule } from '../match/match.module';
+import { Match } from '../match/entities/match.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MatchEvent]), PlayerModule, TeamModule, MatchModule],
+  imports: [TypeOrmModule.forFeature([MatchEvent, Match]), PlayerModule, TeamModule, MatchModule],
   providers: [MatchEventService, MatchEventResolver],
   exports: [MatchEventService],
 })
