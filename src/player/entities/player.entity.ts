@@ -27,6 +27,10 @@ export class Player {
   @Column({ name: 'weight', type: 'int', nullable: false })
   weight: number;
 
+  @Field(() => String, { nullable: true })
+  @Column({ name: 'class', type: 'text', nullable: true })
+  class?: string;
+
   @Field(() => PreferredFoot)
   @Column({ name: 'preferred_foot', type: 'enum', enum: PreferredFoot, nullable: false })
   preferredFoot: PreferredFoot;

@@ -30,6 +30,7 @@ input CreateNewsDto {
 }
 
 input CreatePlayerDto {
+  class: String
   dateOfBirth: Date!
   firstName: String!
   height: Float!
@@ -120,6 +121,7 @@ type News {
 
 type Player {
   age: Float!
+  class: String
   dateOfBirth: Date!
   firstName: String!
   height: Float!
@@ -182,6 +184,7 @@ input UpdateNewsDto {
 }
 
 input UpdatePlayerDto {
+  class: String
   dateOfBirth: Date
   firstName: String
   height: Float

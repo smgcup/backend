@@ -53,4 +53,9 @@ export class UpdatePlayerDto {
   @IsOptional()
   @IsUUID()
   teamId?: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  class?: string;
 }
