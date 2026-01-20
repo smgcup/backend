@@ -63,4 +63,9 @@ export class CreatePlayerDto {
   @IsNotEmpty()
   @IsUUID()
   teamId: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  class?: string;
 }
