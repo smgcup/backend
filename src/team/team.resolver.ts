@@ -33,6 +33,12 @@ export class TeamResolver {
     return await this.playerService.getPlayersByTeamId(team.id);
   }
 
+  @ResolveField(() => Player, { name: 'captain', nullable: true })
+  async captain(@Parent() team: Team): Promise<Player | null> {
+    const withCaptain = await this.teamService.getTeamById(team.id, { relations: { captain: true } });
+    return withCaptain.captain ?? null;
+  }
+
   /**
    * Mutation to create a new team
    * @param createTeamDto - The data for the new team

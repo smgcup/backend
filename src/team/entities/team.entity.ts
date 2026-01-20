@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Player } from '../../player/entities/player.entity';
 
@@ -20,4 +20,9 @@ export class Team {
   @Field(() => Date)
   @Column({ name: 'created_at', type: 'timestamp', nullable: false })
   createdAt: Date;
+
+  @Field(() => Player, { nullable: true })
+  @OneToOne(() => Player, { nullable: true })
+  @JoinColumn({ name: 'captain_id' })
+  captain: Player | null;
 }

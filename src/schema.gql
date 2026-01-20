@@ -158,6 +158,7 @@ type Query {
 }
 
 type Team {
+  captain: Player
   createdAt: Date!
   id: ID!
   name: String!
@@ -193,5 +194,6 @@ input UpdatePlayerDto {
 }
 
 input UpdateTeamDto {
+  captainId: String
   name: String
 }

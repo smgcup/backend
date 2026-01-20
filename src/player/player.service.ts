@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Player } from './entities/player.entity';
@@ -15,6 +15,7 @@ export class PlayerService {
   constructor(
     @InjectRepository(Player)
     private playerRepository: Repository<Player>,
+    @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
   ) {}
 
