@@ -6,6 +6,14 @@ type AdminLoginResult {
   ok: Boolean!
 }
 
+type AuthResponse {
+  """JWT access token"""
+  accessToken: String!
+
+  """Authenticated user"""
+  user: User!
+}
+
 input CreateMatchDto {
   date: Date!
   firstOpponentId: String!
@@ -46,11 +54,33 @@ input CreateTeamDto {
   name: String!
 }
 
+input CreateUserInput {
+  """Email address"""
+  email: String!
+
+  """First name"""
+  firstName: String!
+
+  """Last name"""
+  lastName: String!
+
+  """Password"""
+  password: String!
+}
+
 """Date custom scalar type"""
 scalar Date
 
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
+
+input LoginInput {
+  """Email address"""
+  email: String!
+
+  """Password"""
+  password: String!
+}
 
 type Match {
   date: Date!
@@ -99,11 +129,13 @@ type Mutation {
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
+  createUser(createUserInput: CreateUserInput!): AuthResponse!
   deleteMatch(id: String!): Match!
   deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
   deletePlayer(id: String!): Player!
   deleteTeam(id: String!): Team!
+  login(loginInput: LoginInput!): AuthResponse!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
@@ -199,4 +231,13 @@ input UpdatePlayerDto {
 input UpdateTeamDto {
   captainId: String
   name: String
+}
+
+type User {
+  createdAt: Date!
+  email: String!
+  firstName: String!
+  id: ID!
+  lastName: String!
+  password: String!
 }
