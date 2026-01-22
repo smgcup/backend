@@ -44,12 +44,13 @@ export class MatchService {
     try {
       const match = this.matchRepository.create({
         id: generateUuidv7(),
-        firstOpponent: { id: createMatchDto.firstOpponentId } as Team,
-        secondOpponent: { id: createMatchDto.secondOpponentId } as Team,
+        firstOpponent: { id: createMatchDto.firstOpponentId },
+        secondOpponent: { id: createMatchDto.secondOpponentId },
         date: createMatchDto.date,
         status: createMatchDto.status,
         score1: null,
         score2: null,
+        round: createMatchDto.round,
       });
 
       const saved = await this.matchRepository.save(match);
@@ -97,6 +98,9 @@ export class MatchService {
       }
       if (typeof updateMatchDto.score2 !== 'undefined') {
         match.score2 = updateMatchDto.score2;
+      }
+      if (updateMatchDto.round) {
+        match.round = updateMatchDto.round;
       }
 
       await this.matchRepository.save(match);

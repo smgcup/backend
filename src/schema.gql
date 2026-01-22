@@ -17,6 +17,7 @@ type AuthResponse {
 input CreateMatchDto {
   date: Date!
   firstOpponentId: String!
+  round: Int!
   secondOpponentId: String!
   status: MatchStatus!
 }
@@ -207,6 +208,7 @@ type Team {
 input UpdateMatchDto {
   date: Date
   firstOpponentId: String
+  round: Int
   score1: Int
   score2: Int
   secondOpponentId: String
