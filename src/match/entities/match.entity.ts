@@ -35,4 +35,8 @@ export class Match {
   @Field(() => Int, { nullable: true })
   @Column({ name: 'score2', type: 'integer', nullable: true })
   score2?: number | null;
+
+  @Field(() => Int)
+  @Column({ name: 'round', type: 'integer', nullable: false })
+  round: number;
 }
