@@ -23,22 +23,19 @@ export class UserService {
     const userRepository = manager ? manager.getRepository(User) : this.userRepository;
 
     // Check if account already exists
-    const existingUserByEmail = await userRepository.findOne({
-      where: { email: createUserInput.email },
+
+    const existingUser = await userRepository.findOne({
+      where: [{ email: createUserInput.email }, { username: createUserInput.username }],
     });
 
-    if (existingUserByEmail) {
+    if (existingUser?.email === createUserInput.email) {
       throw new ConflictError(
         USER_TRANSLATION_CODES.userEmailAlreadyInUse,
         `User with email ${createUserInput.email} already exists`,
       );
     }
 
-    const existingUserByUsername = await userRepository.findOne({
-      where: { username: createUserInput.username },
-    });
-
-    if (existingUserByUsername) {
+    if (existingUser?.username === createUserInput.username) {
       throw new ConflictError(
         USER_TRANSLATION_CODES.userUsernameAlreadyInUse,
         `User with username ${createUserInput.username} already exists`,
