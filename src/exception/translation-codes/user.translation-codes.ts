@@ -1,4 +1,6 @@
 export const USER_TRANSLATION_CODES = {
+  // Not Found
+  userEmailNotFound: 'userEmailNotFound',
   // Validation
   userEmailInvalid: 'userEmailInvalid',
   userPasswordTooShort: 'userPasswordTooShort',

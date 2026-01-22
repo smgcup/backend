@@ -74,7 +74,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new UnauthorizedException(USER_TRANSLATION_CODES.userPasswordInvalid, 'Invalid credentials');
+      throw new UnauthorizedException(USER_TRANSLATION_CODES.userEmailInvalid);
     }
 
     // Verify password

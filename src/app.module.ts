@@ -14,6 +14,8 @@ import { MatchModule } from './match/match.module';
 import { NewsModule } from './news/news.module';
 import { MatchEventModule } from './match-event/match-event.module';
 import { UserModule } from './user/user.module';
+import { GeneratorModule } from './generator/generator.module';
+
 @Module({
   imports: [
     GraphqlModule,
@@ -42,6 +44,7 @@ import { UserModule } from './user/user.module';
     MatchEventModule,
     NewsModule,
     UserModule,
+    GeneratorModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],
