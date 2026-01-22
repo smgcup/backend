@@ -8,7 +8,7 @@ import { USER_TRANSLATION_CODES } from '../exception/translation-codes';
 import { JwtPayload } from './strategies/jwt.strategy';
 import { ConflictError, NotFoundError } from '../exception/exceptions';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserInput } from './dto/register.input';
+import { CreateUserInput } from './dto/create-user.input';
 import { generateUuidv7 } from '../shared/utils';
 
 @Injectable()
@@ -23,14 +23,25 @@ export class UserService {
     const userRepository = manager ? manager.getRepository(User) : this.userRepository;
 
     // Check if account already exists
-    const existingUser = await userRepository.findOne({
+    const existingUserByEmail = await userRepository.findOne({
       where: { email: createUserInput.email },
     });
 
-    if (existingUser) {
+    if (existingUserByEmail) {
       throw new ConflictError(
         USER_TRANSLATION_CODES.userEmailAlreadyInUse,
         `User with email ${createUserInput.email} already exists`,
+      );
+    }
+
+    const existingUserByUsername = await userRepository.findOne({
+      where: { username: createUserInput.username },
+    });
+
+    if (existingUserByUsername) {
+      throw new ConflictError(
+        USER_TRANSLATION_CODES.userUsernameAlreadyInUse,
+        `User with username ${createUserInput.username} already exists`,
       );
     }
 

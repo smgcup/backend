@@ -66,6 +66,9 @@ input CreateUserInput {
 
   """Password"""
   password: String!
+
+  """Username"""
+  username: String!
 }
 
 """Date custom scalar type"""
@@ -189,6 +192,7 @@ type Query {
   playerById(id: String!): Player!
   teamById(id: String!): Team!
   teams: [Team!]!
+  user: User!
 }
 
 type Team {
@@ -240,4 +244,5 @@ type User {
   id: ID!
   lastName: String!
   password: String!
+  username: String!
 }

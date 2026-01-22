@@ -26,4 +26,10 @@ export class CreateUserInput {
   @IsString()
   @MinLength(3, { message: USER_TRANSLATION_CODES.userLastNameTooShort })
   lastName!: string;
+
+  @Field(() => String, { description: 'Username' })
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(3, { message: USER_TRANSLATION_CODES.userUsernameTooShort })
+  username!: string;
 }

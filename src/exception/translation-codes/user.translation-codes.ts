@@ -8,10 +8,12 @@ export const USER_TRANSLATION_CODES = {
   userPasswordTooSimilar: 'userPasswordTooSimilar',
   userFirstNameTooShort: 'userFirstNameTooShort',
   userLastNameTooShort: 'userLastNameTooShort',
+  userUsernameTooShort: 'userUsernameTooShort',
   // Not Found
   userNotFound: 'userNotFound',
   // Conflict
   userEmailAlreadyInUse: 'userEmailAlreadyInUse',
+  userUsernameAlreadyInUse: 'userUsernameAlreadyInUse',
   userPasswordInvalid: 'userPasswordInvalid',
   userRoleInvalid: 'userRoleInvalid',
   // Authentication

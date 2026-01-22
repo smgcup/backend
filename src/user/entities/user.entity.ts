@@ -9,6 +9,10 @@ export class User {
   id: string;
 
   @Field(() => String)
+  @Column({ name: 'username', type: 'text', nullable: false })
+  username: string;
+
+  @Field(() => String)
   @Column({ name: 'first_name', type: 'text', nullable: false })
   firstName: string;
 
