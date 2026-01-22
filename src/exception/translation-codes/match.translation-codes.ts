@@ -3,6 +3,8 @@ export const MATCH_TRANSLATION_CODES = {
   matchNotFound: 'matchNotFound',
 
   // Validation
+  matchRoundTooLow: 'matchRoundTooLow',
+  matchRoundTooHigh: 'matchRoundTooHigh',
   invalidMatchDate: 'invalidMatchDate',
   opponentTeamNotFound: 'opponentTeamNotFound',
   opponentTeamsMustBeDifferent: 'opponentTeamsMustBeDifferent',
