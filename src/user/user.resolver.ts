@@ -2,7 +2,7 @@ import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { AuthResponse } from './dto/auth-response.type';
 import { LoginInput } from './dto/login.input';
-import { CreateUserInput } from './dto/create-user.input';
+import { RegisterUserInput } from './dto/create-user.input';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from './entities/user.entity';
 import { UserSession } from './decorators/user-session.decorator';
@@ -17,9 +17,9 @@ export class UserResolver {
     return await this.userService.login(loginInput);
   }
 
-  @Mutation(() => AuthResponse, { name: 'createUser', nullable: false })
-  async createUser(@Args('createUserInput') createUserInput: CreateUserInput): Promise<AuthResponse> {
-    return await this.userService.createUser(createUserInput);
+  @Mutation(() => AuthResponse, { name: 'register', nullable: false })
+  async register(@Args('registerInput') registerInput: RegisterUserInput): Promise<AuthResponse> {
+    return await this.userService.createUser(registerInput);
   }
 
   @UseGuards(JwtAuthGuard)

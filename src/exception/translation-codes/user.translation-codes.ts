@@ -3,14 +3,21 @@ export const USER_TRANSLATION_CODES = {
   userEmailNotFound: 'userEmailNotFound',
   // Validation
   userEmailInvalid: 'userEmailInvalid',
+  userEmailTooLong: 'userEmailTooLong',
   userPasswordTooShort: 'userPasswordTooShort',
   userPasswordTooLong: 'userPasswordTooLong',
   userPasswordTooComplex: 'userPasswordTooComplex',
   userPasswordTooCommon: 'userPasswordTooCommon',
   userPasswordTooSimilar: 'userPasswordTooSimilar',
   userFirstNameTooShort: 'userFirstNameTooShort',
+  userFirstNameTooLong: 'userFirstNameTooLong',
+  userFirstNameInvalid: 'userFirstNameInvalid',
   userLastNameTooShort: 'userLastNameTooShort',
+  userLastNameTooLong: 'userLastNameTooLong',
+  userLastNameInvalid: 'userLastNameInvalid',
   userUsernameTooShort: 'userUsernameTooShort',
+  userUsernameTooLong: 'userUsernameTooLong',
+  userUsernameInvalid: 'userUsernameInvalid',
   // Not Found
   userNotFound: 'userNotFound',
   // Conflict

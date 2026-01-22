@@ -54,23 +54,6 @@ input CreateTeamDto {
   name: String!
 }
 
-input CreateUserInput {
-  """Email address"""
-  email: String!
-
-  """First name"""
-  firstName: String!
-
-  """Last name"""
-  lastName: String!
-
-  """Password"""
-  password: String!
-
-  """Username"""
-  username: String!
-}
-
 """Date custom scalar type"""
 scalar Date
 
@@ -132,13 +115,13 @@ type Mutation {
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createTeam(createTeamDto: CreateTeamDto!): Team!
-  createUser(createUserInput: CreateUserInput!): AuthResponse!
   deleteMatch(id: String!): Match!
   deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
   deletePlayer(id: String!): Player!
   deleteTeam(id: String!): Team!
   login(loginInput: LoginInput!): AuthResponse!
+  register(registerInput: RegisterUserInput!): AuthResponse!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
@@ -193,6 +176,23 @@ type Query {
   teamById(id: String!): Team!
   teams: [Team!]!
   user: User!
+}
+
+input RegisterUserInput {
+  """Email address"""
+  email: String!
+
+  """First name"""
+  firstName: String!
+
+  """Last name"""
+  lastName: String!
+
+  """Password"""
+  password: String!
+
+  """Username"""
+  username: String!
 }
 
 type Team {

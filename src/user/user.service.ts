@@ -8,7 +8,7 @@ import { USER_TRANSLATION_CODES } from '../exception/translation-codes';
 import { JwtPayload } from './strategies/jwt.strategy';
 import { ConflictError, NotFoundError } from '../exception/exceptions';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserInput } from './dto/create-user.input';
+import { RegisterUserInput } from './dto/create-user.input';
 import { generateUuidv7 } from '../shared/utils';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
-  async createUser(createUserInput: CreateUserInput, manager?: EntityManager): Promise<AuthResponse> {
+  async createUser(createUserInput: RegisterUserInput, manager?: EntityManager): Promise<AuthResponse> {
     const userRepository = manager ? manager.getRepository(User) : this.userRepository;
 
     // Check if account already exists
