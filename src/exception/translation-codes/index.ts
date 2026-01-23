@@ -9,3 +9,4 @@ export * from './team.translation-codes';
 export * from './player.translation-codes';
 export * from './news.translation-codes';
 export * from './match-event.translation-codes';
+export * from './image.translation-codes';
