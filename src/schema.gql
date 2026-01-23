@@ -150,6 +150,7 @@ type Player {
   lastName: String!
   position: PlayerPosition!
   preferredFoot: PreferredFoot!
+  stats: PlayerStats
   team: Team!
   weight: Float!
 }
@@ -159,6 +160,17 @@ enum PlayerPosition {
   FORWARD
   GOALKEEPER
   MIDFIELDER
+}
+
+type PlayerStats {
+  assists: Float!
+  goalkeeperSaves: Float!
+  goals: Float!
+  penaltiesMissed: Float!
+  penaltiesScored: Float!
+  playerId: ID!
+  redCards: Float!
+  yellowCards: Float!
 }
 
 enum PreferredFoot {

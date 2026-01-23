@@ -9,6 +9,7 @@ import { InternalServerError } from '../exception/exceptions';
 import { generateUuidv7 } from '../shared/utils';
 import { TeamService } from '../team/team.service';
 import { UpdatePlayerDto } from './dto/update-player.dto';
+import { PlayerStatsService } from './player-stats.service';
 
 @Injectable()
 export class PlayerService {
@@ -17,6 +18,7 @@ export class PlayerService {
     private playerRepository: Repository<Player>,
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
+    private playerStatsService: PlayerStatsService,
   ) {}
 
   /**
@@ -57,7 +59,9 @@ export class PlayerService {
       ...createPlayerDto,
     });
     try {
-      return await this.playerRepository.save(player);
+      const savedPlayer = await this.playerRepository.save(player);
+      await this.playerStatsService.createEmptyStats(savedPlayer.id);
+      return savedPlayer;
     } catch {
       throw new InternalServerError(PLAYER_TRANSLATION_CODES.playerCreationFailed);
     }

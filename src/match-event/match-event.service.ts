@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { MatchEvent } from './entities/match-event.entity';
 import { CreateMatchEventDto } from './dto/create-match-event.dto';
 import { BadRequestError, InternalServerError, NotFoundError } from '../exception/exceptions';
 import { MATCH_EVENT_TRANSLATION_CODES } from '../exception/translation-codes';
 import { MatchEventType } from './enums/match-event-type.enum';
 import { PlayerService } from '../player/player.service';
+import { PlayerStatsService } from '../player/player-stats.service';
 import { TeamService } from '../team/team.service';
 import { MatchService } from '../match/match.service';
 import { generateUuidv7 } from '../shared/utils';
@@ -20,8 +21,10 @@ export class MatchEventService {
     private readonly matchEventRepository: Repository<MatchEvent>,
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
+    private readonly dataSource: DataSource,
     private readonly matchService: MatchService,
     private readonly playerService: PlayerService,
+    private readonly playerStatsService: PlayerStatsService,
     private readonly teamService: TeamService,
   ) {}
 
@@ -69,25 +72,30 @@ export class MatchEventService {
     }
 
     try {
-      const created = this.matchEventRepository.create({
-        id: generateUuidv7(),
-        match,
-        player,
-        assistPlayer,
-        type: createMatchEventDto.type,
-        minute: createMatchEventDto.minute,
-        createdAt: new Date(),
+      return await this.dataSource.transaction(async (manager) => {
+        const created = manager.create(MatchEvent, {
+          id: generateUuidv7(),
+          match,
+          player,
+          assistPlayer,
+          type: createMatchEventDto.type,
+          minute: createMatchEventDto.minute,
+          createdAt: new Date(),
+        });
+
+        const savedEvent = await manager.save(created);
+
+        // Sync player stats
+        await this.playerStatsService.handleEventCreated(savedEvent, manager);
+
+        // If the event is FULL_TIME, update match status to FINISHED
+        if (createMatchEventDto.type === MatchEventType.FULL_TIME) {
+          match.status = MatchStatus.FINISHED;
+          await manager.save(match);
+        }
+
+        return savedEvent;
       });
-
-      const savedEvent = await this.matchEventRepository.save(created);
-
-      // If the event is FULL_TIME, update match status to FINISHED
-      if (createMatchEventDto.type === MatchEventType.FULL_TIME) {
-        match.status = MatchStatus.FINISHED;
-        await this.matchRepository.save(match);
-      }
-
-      return savedEvent;
     } catch (error) {
       console.error(error);
 
@@ -97,8 +105,13 @@ export class MatchEventService {
 
   async deleteMatchEvent(id: MatchEvent['id']) {
     const event = await this.getMatchEventById(id);
-    await this.matchEventRepository.remove(event);
-    return id;
+
+    return await this.dataSource.transaction(async (manager) => {
+      // Sync player stats before deletion
+      await this.playerStatsService.handleEventDeleted(event, manager);
+      await manager.remove(event);
+      return id;
+    });
   }
 
   private async getMatchEventById(id: MatchEvent['id']) {
