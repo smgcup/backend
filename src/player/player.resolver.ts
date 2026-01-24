@@ -1,12 +1,17 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, ResolveField, Parent } from '@nestjs/graphql';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './player.service';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
+import { PlayerStatsService } from './player-stats.service';
+import { PlayerStats } from './entities/player-stats.entity';
 
 @Resolver(() => Player)
 export class PlayerResolver {
-  constructor(private readonly playerService: PlayerService) {}
+  constructor(
+    private readonly playerService: PlayerService,
+    private readonly playerStatsService: PlayerStatsService,
+  ) {}
 
   /**
    * Query to get a player by its ID
@@ -16,6 +21,11 @@ export class PlayerResolver {
   @Query(() => Player, { name: 'playerById' })
   async playerById(@Args('id', { type: () => String }) id: string): Promise<Player> {
     return await this.playerService.getPlayerById(id);
+  }
+
+  @ResolveField(() => PlayerStats, { name: 'stats', nullable: true })
+  async stats(@Parent() player: Player): Promise<PlayerStats | null> {
+    return await this.playerStatsService.getStatsByPlayerId(player.id);
   }
 
   /**
