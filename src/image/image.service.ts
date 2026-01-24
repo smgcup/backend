@@ -11,12 +11,13 @@ import { generateUuidv7 } from '../shared/utils';
 export class ImageService {
   private readonly supabase: SupabaseClient;
   private readonly defaultBucket: string = 'images';
-  private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 7; // 7 days in seconds
+  private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 400; // 7 days in seconds
 
   constructor(private readonly configService: ConfigService) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || '';
     const supabaseServiceRoleKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') || '';
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.supabase = createClient(supabaseUrl, supabaseServiceRoleKey, {
       auth: {
         autoRefreshToken: false,
