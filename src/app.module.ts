@@ -15,6 +15,7 @@ import { NewsModule } from './news/news.module';
 import { MatchEventModule } from './match-event/match-event.module';
 import { UserModule } from './user/user.module';
 import { GeneratorModule } from './generator/generator.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -32,6 +33,8 @@ import { GeneratorModule } from './generator/generator.module';
         NAMESPACE: Joi.string().required(),
         JWT_SECRET: Joi.string().required(), // Add this
         JWT_EXPIRES_IN: Joi.string().default('7d'), // Add this (optional)
+        SUPABASE_URL: Joi.string().required(),
+        SUPABASE_SERVICE_ROLE_KEY: Joi.string().required(),
       }),
       validationOptions: { abortEarly: true },
       isGlobal: true,
@@ -45,6 +48,7 @@ import { GeneratorModule } from './generator/generator.module';
     NewsModule,
     UserModule,
     GeneratorModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],
