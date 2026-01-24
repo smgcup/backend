@@ -19,6 +19,7 @@ export class UploadFileDto {
   mimeType: string;
 
   @Field(() => String, { nullable: true })
+  @IsNotEmpty()
   @IsString()
-  bucket?: string;
+  bucket: string;
 }

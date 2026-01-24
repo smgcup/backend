@@ -2,15 +2,14 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { Player } from './entities/player.entity';
-import { PLAYER_TRANSLATION_CODES } from '../exception/translation-codes';
-import { NotFoundError } from '../exception/exceptions';
+import { IMAGE_TRANSLATION_CODES, PLAYER_TRANSLATION_CODES } from '../exception/translation-codes';
+import { BadRequestError, InternalServerError, NotFoundError } from '../exception/exceptions';
 import { CreatePlayerDto } from './dto/create-player.dto';
-import { InternalServerError } from '../exception/exceptions';
 import { generateUuidv7 } from '../shared/utils';
 import { TeamService } from '../team/team.service';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { PlayerStatsService } from './player-stats.service';
-
+import { ImageService } from '../image/image.service';
 @Injectable()
 export class PlayerService {
   constructor(
@@ -19,6 +18,7 @@ export class PlayerService {
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
     private playerStatsService: PlayerStatsService,
+    private imageService: ImageService,
   ) {}
 
   /**
@@ -70,8 +70,25 @@ export class PlayerService {
   async updatePlayer(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     const player = await this.getPlayerById(id);
 
-    const { teamId, ...patch } = updatePlayerDto;
+    const { teamId, image, ...patch } = updatePlayerDto;
     Object.assign(player, patch);
+
+    if (image) {
+      const { mimeType } = image;
+      const extension = mimeType?.split('/')[1];
+      if (!mimeType || !extension) {
+        throw new BadRequestError(IMAGE_TRANSLATION_CODES.invalidFileType);
+      }
+
+      const uploadedImage = await this.imageService.uploadFile({
+        fileBase64: image.fileBase64,
+        fileName: `${player.id}.${extension}`,
+        mimeType,
+        bucket: 'player-images',
+      });
+
+      player.imageUrl = uploadedImage.signedUrl;
+    }
 
     if (teamId) {
       player.team = await this.teamService.getTeamById(teamId);

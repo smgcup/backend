@@ -1,7 +1,32 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  MinLength,
+  ValidateNested,
+} from 'class-validator';
 import { PreferredFoot } from '../enums/preferred-foot.enum';
 import { PlayerPosition } from '../enums/player-position.enum';
+import { Type } from 'class-transformer';
+
+@InputType()
+export class UpdatePlayerImageDto {
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  fileBase64: string;
+
+  @Field(() => String)
+  @IsNotEmpty()
+  @IsString()
+  mimeType: string;
+}
 
 @InputType()
 export class UpdatePlayerDto {
@@ -34,10 +59,16 @@ export class UpdatePlayerDto {
   @IsNumber()
   weight?: number;
 
+  // @Field({ nullable: true })
+  // @IsOptional()
+  // @IsString()
+  // imageUrl?: string;
+
   @Field({ nullable: true })
   @IsOptional()
-  @IsString()
-  imageUrl?: string;
+  @ValidateNested()
+  @Type(() => UpdatePlayerImageDto)
+  image?: UpdatePlayerImageDto;
 
   @Field(() => PreferredFoot, { nullable: true })
   @IsOptional()

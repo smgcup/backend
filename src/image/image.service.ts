@@ -10,8 +10,7 @@ import { generateUuidv7 } from '../shared/utils';
 @Injectable()
 export class ImageService {
   private readonly supabase: SupabaseClient;
-  private readonly defaultBucket: string = 'images';
-  private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 400; // 7 days in seconds
+  private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 400; // 400 days in seconds
 
   constructor(private readonly configService: ConfigService) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || '';
@@ -28,12 +27,15 @@ export class ImageService {
 
   async uploadFile(uploadFileDto: UploadFileDto): Promise<UploadResponse> {
     const { fileBase64, fileName, mimeType, bucket } = uploadFileDto;
-    const targetBucket = bucket || this.defaultBucket;
+
+    if (!bucket) {
+      throw new BadRequestError(IMAGE_TRANSLATION_CODES.bucketNotFound);
+    }
 
     const fileBuffer = this.decodeBase64(fileBase64);
     const uniqueFileName = this.generateUniqueFileName(fileName);
 
-    const { data, error } = await this.supabase.storage.from(targetBucket).upload(uniqueFileName, fileBuffer, {
+    const { data, error } = await this.supabase.storage.from(bucket).upload(uniqueFileName, fileBuffer, {
       contentType: mimeType,
       upsert: false,
     });
@@ -42,7 +44,7 @@ export class ImageService {
       throw new InternalServerError(IMAGE_TRANSLATION_CODES.uploadFailed, error.message);
     }
 
-    const signedUrl = await this.createSignedUrl(targetBucket, data.path);
+    const signedUrl = await this.createSignedUrl(bucket, data.path);
 
     return {
       path: data.path,
