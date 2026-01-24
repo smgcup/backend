@@ -116,6 +116,25 @@ export class MatchService {
     return { ...match, id };
   }
 
+  async startMatch(id: string): Promise<Match> {
+    const match = await this.getMatchById(id);
+
+    if (match.status !== MatchStatus.SCHEDULED) {
+      throw new BadRequestError(MATCH_TRANSLATION_CODES.matchCannotBeStarted);
+    }
+
+    try {
+      match.status = MatchStatus.LIVE;
+      match.score1 = 0;
+      match.score2 = 0;
+
+      await this.matchRepository.save(match);
+      return await this.getMatchById(id);
+    } catch {
+      throw new InternalServerError(MATCH_TRANSLATION_CODES.matchUpdateFailed);
+    }
+  }
+
   private assertValidDate(date: Date): void {
     if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
       throw new BadRequestError(MATCH_TRANSLATION_CODES.invalidMatchDate);

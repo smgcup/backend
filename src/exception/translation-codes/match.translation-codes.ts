@@ -9,6 +9,7 @@ export const MATCH_TRANSLATION_CODES = {
   opponentTeamNotFound: 'opponentTeamNotFound',
   opponentTeamsMustBeDifferent: 'opponentTeamsMustBeDifferent',
   scoreNotAllowedForStatus: 'scoreNotAllowedForStatus',
+  matchCannotBeStarted: 'matchCannotBeStarted',
 
   // Persistence
   matchCreationFailed: 'matchCreationFailed',
