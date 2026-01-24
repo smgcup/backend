@@ -37,4 +37,9 @@ export class MatchResolver {
   async deleteMatch(@Args('id', { type: () => String }) id: string): Promise<Match> {
     return await this.matchService.deleteMatch(id);
   }
+
+  @Mutation(() => Match, { name: 'startMatch' })
+  async startMatch(@Args('id', { type: () => String }) id: string): Promise<Match> {
+    return await this.matchService.startMatch(id);
+  }
 }

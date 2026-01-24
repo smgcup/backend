@@ -124,6 +124,7 @@ type Mutation {
   deleteTeam(id: String!): Team!
   login(loginInput: LoginInput!): AuthResponse!
   register(registerInput: RegisterUserInput!): AuthResponse!
+  startMatch(id: String!): Match!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
