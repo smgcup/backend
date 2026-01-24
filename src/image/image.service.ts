@@ -10,8 +10,8 @@ import { generateUuidv7 } from '../shared/utils';
 @Injectable()
 export class ImageService {
   private readonly supabase: SupabaseClient;
-  private readonly defaultBucket: string = 'images';
-  private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 400; // 7 days in seconds
+  private readonly defaultBucket: string = 'player-images';
+  private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 400; // 400 days in seconds
 
   constructor(private readonly configService: ConfigService) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || '';
@@ -27,8 +27,8 @@ export class ImageService {
   }
 
   async uploadFile(uploadFileDto: UploadFileDto): Promise<UploadResponse> {
-    const { fileBase64, fileName, mimeType, bucket } = uploadFileDto;
-    const targetBucket = bucket || this.defaultBucket;
+    const { fileBase64, fileName, mimeType } = uploadFileDto;
+    const targetBucket = this.defaultBucket;
 
     const fileBuffer = this.decodeBase64(fileBase64);
     const uniqueFileName = this.generateUniqueFileName(fileName);

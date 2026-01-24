@@ -240,12 +240,17 @@ input UpdatePlayerDto {
   dateOfBirth: Date
   firstName: String
   height: Float
-  imageUrl: String
+  image: UpdatePlayerImageDto
   lastName: String
   position: PlayerPosition
   preferredFoot: PreferredFoot
   teamId: String
   weight: Float
+}
+
+input UpdatePlayerImageDto {
+  fileBase64: String!
+  mimeType: String!
 }
 
 input UpdateTeamDto {

@@ -6,10 +6,16 @@ import { PlayerService } from './player.service';
 import { PlayerStatsService } from './player-stats.service';
 import { TeamModule } from '../team/team.module';
 import { PlayerResolver } from './player.resolver';
+import { ImageModule } from '../image/image.module';
+import { ImageService } from '../image/image.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Player, PlayerStats]), forwardRef(() => TeamModule)],
-  providers: [PlayerService, PlayerStatsService, PlayerResolver],
+  imports: [
+    TypeOrmModule.forFeature([Player, PlayerStats]),
+    forwardRef(() => TeamModule),
+    forwardRef(() => ImageModule),
+  ],
+  providers: [PlayerService, PlayerStatsService, PlayerResolver, ImageService],
   exports: [PlayerService, PlayerStatsService, TypeOrmModule],
 })
 export class PlayerModule {}
