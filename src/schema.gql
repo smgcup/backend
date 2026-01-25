@@ -61,6 +61,14 @@ scalar Date
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
 
+enum LeaderboardSortType {
+  ASSISTS
+  CLEAN_SHEETS
+  GOALS
+  RED_CARDS
+  YELLOW_CARDS
+}
+
 input LoginInput {
   """Email address"""
   email: String!
@@ -141,6 +149,12 @@ type News {
   title: String!
 }
 
+type PaginatedPlayersResponse {
+  hasMore: Boolean!
+  players: [Player!]!
+  totalCount: Int!
+}
+
 type Player {
   age: Float!
   class: String
@@ -189,6 +203,7 @@ type Query {
   news: [News!]!
   newsById(id: String!): News!
   playerById(id: String!): Player!
+  playersLeaderboard(limit: Int! = 20, page: Int! = 1, sortBy: LeaderboardSortType!): PaginatedPlayersResponse!
   teamById(id: String!): Team!
   teams: [Team!]!
   user: User!

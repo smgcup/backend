@@ -1,10 +1,12 @@
-import { Resolver, Query, Args, Mutation, ResolveField, Parent } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, ResolveField, Parent, Int } from '@nestjs/graphql';
 import { Player } from './entities/player.entity';
 import { PlayerService } from './player.service';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { PlayerStatsService } from './player-stats.service';
 import { PlayerStats } from './entities/player-stats.entity';
+import { LeaderboardSortType } from './enums/leaderboard-sort-type.enum';
+import { PaginatedPlayersResponse } from './dto/paginated-players-response.dto';
 
 @Resolver(() => Player)
 export class PlayerResolver {
@@ -21,6 +23,22 @@ export class PlayerResolver {
   @Query(() => Player, { name: 'playerById' })
   async playerById(@Args('id', { type: () => String }) id: string): Promise<Player> {
     return await this.playerService.getPlayerById(id);
+  }
+
+  /**
+   * Query to get players leaderboard with pagination
+   * @param sortBy - The stat to sort by
+   * @param page - The page number (1-indexed, defaults to 1)
+   * @param limit - The number of players per page (defaults to 20)
+   * @returns Paginated players response
+   */
+  @Query(() => PaginatedPlayersResponse, { name: 'playersLeaderboard' })
+  async playersLeaderboard(
+    @Args('sortBy', { type: () => LeaderboardSortType }) sortBy: LeaderboardSortType,
+    @Args('page', { type: () => Int, defaultValue: 1 }) page: number,
+    @Args('limit', { type: () => Int, defaultValue: 20 }) limit: number,
+  ): Promise<PaginatedPlayersResponse> {
+    return await this.playerService.getPlayersLeaderboard(sortBy, page, limit);
   }
 
   @ResolveField(() => PlayerStats, { name: 'stats', nullable: true })

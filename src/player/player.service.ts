@@ -10,6 +10,9 @@ import { TeamService } from '../team/team.service';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { PlayerStatsService } from './player-stats.service';
 import { ImageService } from '../image/image.service';
+import { LeaderboardSortType } from './enums/leaderboard-sort-type.enum';
+import { PaginatedPlayersResponse } from './dto/paginated-players-response.dto';
+import { PlayerPosition } from './enums/player-position.enum';
 @Injectable()
 export class PlayerService {
   constructor(
@@ -101,5 +104,66 @@ export class PlayerService {
     const player = await this.getPlayerById(id);
     await this.playerRepository.remove(player);
     return player;
+  }
+
+  /**
+   * Method to get players for leaderboard with pagination
+   * @param sortBy - The stat to sort by
+   * @param page - The page number (1-indexed)
+   * @param limit - The number of players per page
+   * @returns Paginated players response
+   */
+  async getPlayersLeaderboard(
+    sortBy: LeaderboardSortType,
+    page: number = 1,
+    limit: number = 20,
+  ): Promise<PaginatedPlayersResponse> {
+    const offset = (page - 1) * limit;
+
+    const queryBuilder = this.playerRepository
+      .createQueryBuilder('player')
+      .leftJoinAndSelect('player.stats', 'stats')
+      .leftJoinAndSelect('player.team', 'team');
+
+    // For clean sheets, filter to only goalkeepers
+    if (sortBy === LeaderboardSortType.CLEAN_SHEETS) {
+      queryBuilder.where('player.position = :position', {
+        position: PlayerPosition.GOALKEEPER,
+      });
+    }
+
+    // Apply sorting based on the stat type
+    const orderColumn = this.getOrderColumnForSortType(sortBy);
+    queryBuilder.orderBy(orderColumn, 'DESC');
+
+    // Get total count for pagination info
+    const totalCount = await queryBuilder.getCount();
+
+    // Apply pagination
+    const players = await queryBuilder.skip(offset).take(limit).getMany();
+
+    return {
+      players,
+      totalCount,
+      hasMore: offset + players.length < totalCount,
+    };
+  }
+
+  private getOrderColumnForSortType(sortBy: LeaderboardSortType): string {
+    switch (sortBy) {
+      case LeaderboardSortType.GOALS:
+        return 'stats.goals';
+      case LeaderboardSortType.ASSISTS:
+        return 'stats.assists';
+      case LeaderboardSortType.CLEAN_SHEETS:
+        // For now, just return goalkeepers sorted by saves (placeholder)
+        return 'stats.goalkeeperSaves';
+      case LeaderboardSortType.RED_CARDS:
+        return 'stats.redCards';
+      case LeaderboardSortType.YELLOW_CARDS:
+        return 'stats.yellowCards';
+      default:
+        return 'stats.goals';
+    }
   }
 }
