@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsString, IsNotEmpty } from 'class-validator';
-
+import { IsString, IsNotEmpty, ValidateNested } from 'class-validator';
+import { ImageUploadInput } from '../../shared/inputs/image-upload.input';
+import { Type } from 'class-transformer';
 @InputType()
 export class CreateNewsDto {
   @Field()
@@ -19,7 +20,7 @@ export class CreateNewsDto {
   category: string;
 
   @Field()
-  @IsString()
-  @IsNotEmpty()
-  imageUrl: string;
+  @ValidateNested()
+  @Type(() => ImageUploadInput)
+  image: ImageUploadInput;
 }

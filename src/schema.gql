@@ -34,7 +34,7 @@ input CreateMatchEventDto {
 input CreateNewsDto {
   category: String!
   content: String!
-  imageUrl: String!
+  image: ImageUploadInput!
   title: String!
 }
 
@@ -60,6 +60,11 @@ scalar Date
 
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
+
+input ImageUploadInput {
+  fileBase64: String!
+  mimeType: String!
+}
 
 enum LeaderboardSortType {
   ASSISTS
@@ -134,7 +139,7 @@ type Mutation {
   register(registerInput: RegisterUserInput!): AuthResponse!
   startMatch(id: String!): Match!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
-  updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
+  updateNews(id: String!, updateNewsDto: UpdateNewsDto!): Boolean!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
   updateTeam(id: String!, updateTeamDto: UpdateTeamDto!): Team!
   uploadFile(uploadFileDto: UploadFileDto!): UploadResponse!
@@ -247,7 +252,7 @@ input UpdateMatchDto {
 input UpdateNewsDto {
   category: String
   content: String
-  imageUrl: String
+  image: ImageUploadInput
   title: String
 }
 
@@ -256,17 +261,12 @@ input UpdatePlayerDto {
   dateOfBirth: Date
   firstName: String
   height: Float
-  image: UpdatePlayerImageDto
+  image: ImageUploadInput
   lastName: String
   position: PlayerPosition
   preferredFoot: PreferredFoot
   teamId: String
   weight: Float
-}
-
-input UpdatePlayerImageDto {
-  fileBase64: String!
-  mimeType: String!
 }
 
 input UpdateTeamDto {
