@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsDate, IsEnum, IsInt, IsNotEmpty, IsString, IsUUID, Max, Min } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Max, Min } from 'class-validator';
 import { MatchStatus } from '../enums/match-status.enum';
 import { MATCH_TRANSLATION_CODES } from '../../exception/translation-codes/match.translation-codes';
 import { MATCH_ROUND_VALUES } from '../match.constants';
@@ -18,10 +18,10 @@ export class CreateMatchDto {
   @IsUUID('all')
   secondOpponentId: string;
 
-  @Field(() => Date)
-  @IsNotEmpty()
+  @Field(() => Date, { nullable: true })
+  @IsOptional()
   @IsDate()
-  date: Date;
+  date: Date | null;
 
   @Field(() => MatchStatus)
   @IsNotEmpty()

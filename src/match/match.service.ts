@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
@@ -12,6 +12,8 @@ import { MatchStatus } from './enums/match-status.enum';
 
 @Injectable()
 export class MatchService {
+  private readonly logger = new Logger(MatchService.name);
+
   constructor(
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
@@ -46,7 +48,7 @@ export class MatchService {
         id: generateUuidv7(),
         firstOpponent: { id: createMatchDto.firstOpponentId },
         secondOpponent: { id: createMatchDto.secondOpponentId },
-        date: createMatchDto.date,
+        date: createMatchDto.date ?? null,
         status: createMatchDto.status,
         score1: null,
         score2: null,
@@ -55,7 +57,8 @@ export class MatchService {
 
       const saved = await this.matchRepository.save(match);
       return await this.getMatchById(saved.id);
-    } catch {
+    } catch (error: unknown) {
+      this.logger.error(`Error creating match: ${(error as Error).message}`);
       throw new InternalServerError(MATCH_TRANSLATION_CODES.matchCreationFailed);
     }
   }
@@ -88,7 +91,7 @@ export class MatchService {
         match.secondOpponent = { id: updateMatchDto.secondOpponentId } as Team;
       }
       if (updateMatchDto.date) {
-        match.date = updateMatchDto.date;
+        match.date = updateMatchDto.date ?? null;
       }
       if (updateMatchDto.status) {
         match.status = updateMatchDto.status;
@@ -135,8 +138,16 @@ export class MatchService {
     }
   }
 
-  private assertValidDate(date: Date): void {
-    if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+  private assertValidDate(date?: unknown): void {
+    // allow null / undefined
+    if (date == null) {
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const parsedDate = date instanceof Date ? date : new Date(date as any);
+
+    if (Number.isNaN(parsedDate.getTime())) {
       throw new BadRequestError(MATCH_TRANSLATION_CODES.invalidMatchDate);
     }
   }

@@ -15,7 +15,7 @@ type AuthResponse {
 }
 
 input CreateMatchDto {
-  date: Date!
+  date: Date
   firstOpponentId: String!
   round: Int!
   secondOpponentId: String!
@@ -70,7 +70,7 @@ input LoginInput {
 }
 
 type Match {
-  date: Date!
+  date: Date
   firstOpponent: Team!
   id: ID!
   round: Int!

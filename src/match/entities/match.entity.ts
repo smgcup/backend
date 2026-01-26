@@ -20,9 +20,9 @@ export class Match {
   @JoinColumn({ name: 'second_opponent_id' })
   secondOpponent: Team;
 
-  @Field(() => Date)
-  @Column({ name: 'date', type: 'timestamp', nullable: false })
-  date: Date;
+  @Field(() => Date, { nullable: true })
+  @Column({ name: 'date', type: 'timestamp', nullable: true })
+  date: Date | null;
 
   @Field(() => MatchStatus)
   @Column({ name: 'status', type: 'enum', enum: MatchStatus, nullable: false })
