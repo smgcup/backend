@@ -22,7 +22,7 @@ export class PlayerResolver {
    */
   @Query(() => Player, { name: 'playerById' })
   async playerById(@Args('id', { type: () => String }) id: string): Promise<Player> {
-    return await this.playerService.getPlayerById(id);
+    return await this.playerService.getPlayerById(id, { relations: ['team'] });
   }
 
   /**
