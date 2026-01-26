@@ -5,14 +5,16 @@ import { Repository } from 'typeorm';
 import { CreateNewsDto } from './dto/create-news.dto';
 import { UpdateNewsDto } from './dto/update-news.dto';
 import { generateUuidv7 } from '../shared/utils';
-import { NotFoundError } from '../exception/exceptions';
-import { NEWS_TRANSLATION_CODES } from '../exception/translation-codes';
+import { BadRequestError, NotFoundError } from '../exception/exceptions';
+import { IMAGE_TRANSLATION_CODES, NEWS_TRANSLATION_CODES } from '../exception/translation-codes';
+import { ImageService } from '../image/image.service';
 
 @Injectable()
 export class NewsService {
   constructor(
     @InjectRepository(News)
     private newsRepository: Repository<News>,
+    private imageService: ImageService,
   ) {}
 
   async getNews(): Promise<News[]> {
@@ -20,9 +22,26 @@ export class NewsService {
   }
 
   async createNews(createNewsDto: CreateNewsDto): Promise<News> {
+    const newsId = generateUuidv7();
+
+    const { mimeType } = createNewsDto.image;
+
+    const extension = mimeType?.split('/')[1];
+
+    if (!mimeType || !extension) {
+      throw new BadRequestError(IMAGE_TRANSLATION_CODES.invalidFileType);
+    }
+    const uploadedImage = await this.imageService.uploadFile({
+      fileBase64: createNewsDto.image.fileBase64,
+      fileName: `${newsId}.${extension}`,
+      mimeType,
+      bucket: 'news-images',
+    });
+
     const news = this.newsRepository.create({
-      id: generateUuidv7(),
+      id: newsId,
       createdAt: new Date(),
+      imageUrl: uploadedImage.signedUrl,
       ...createNewsDto,
     });
     return await this.newsRepository.save(news);
@@ -36,10 +55,25 @@ export class NewsService {
     return news;
   }
 
-  async updateNews(id: string, updateNewsDto: UpdateNewsDto): Promise<News> {
+  async updateNews(id: string, updateNewsDto: UpdateNewsDto) {
     const news = await this.getNewsById(id);
     Object.assign(news, updateNewsDto);
-    return await this.newsRepository.save(news);
+    if (updateNewsDto.image) {
+      const { mimeType } = updateNewsDto.image;
+      const extension = mimeType?.split('/')[1];
+      if (!mimeType || !extension) {
+        throw new BadRequestError(IMAGE_TRANSLATION_CODES.invalidFileType);
+      }
+      const uploadedImage = await this.imageService.uploadFile({
+        fileBase64: updateNewsDto.image.fileBase64,
+        fileName: `${news.id}.${extension}`,
+        mimeType,
+        bucket: 'news-images',
+      });
+      news.imageUrl = uploadedImage.signedUrl;
+    }
+    await this.newsRepository.save(news);
+    return true;
   }
 
   async deleteNews(id: string): Promise<News> {

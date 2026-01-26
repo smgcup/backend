@@ -14,7 +14,7 @@ export class NewsResolver {
   }
 
   @Mutation(() => News, { name: 'createNews' })
-  async createNews(@Args('createNewsDto') createNewsDto: CreateNewsDto): Promise<News> {
+  async createNews(@Args('createNewsDto', { type: () => CreateNewsDto }) createNewsDto: CreateNewsDto): Promise<News> {
     return await this.newsService.createNews(createNewsDto);
   }
 
@@ -23,11 +23,11 @@ export class NewsResolver {
     return await this.newsService.getNewsById(id);
   }
 
-  @Mutation(() => News, { name: 'updateNews' })
+  @Mutation(() => Boolean, { name: 'updateNews' })
   async updateNews(
     @Args('id', { type: () => String }) id: string,
     @Args('updateNewsDto') updateNewsDto: UpdateNewsDto,
-  ): Promise<News> {
+  ) {
     return await this.newsService.updateNews(id, updateNewsDto);
   }
 

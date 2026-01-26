@@ -2,7 +2,6 @@ import { Field, InputType } from '@nestjs/graphql';
 import {
   IsDate,
   IsEnum,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -14,19 +13,7 @@ import {
 import { PreferredFoot } from '../enums/preferred-foot.enum';
 import { PlayerPosition } from '../enums/player-position.enum';
 import { Type } from 'class-transformer';
-
-@InputType()
-export class UpdatePlayerImageDto {
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  fileBase64: string;
-
-  @Field(() => String)
-  @IsNotEmpty()
-  @IsString()
-  mimeType: string;
-}
+import { ImageUploadInput } from '../../shared/inputs/image-upload.input';
 
 @InputType()
 export class UpdatePlayerDto {
@@ -67,8 +54,8 @@ export class UpdatePlayerDto {
   @Field({ nullable: true })
   @IsOptional()
   @ValidateNested()
-  @Type(() => UpdatePlayerImageDto)
-  image?: UpdatePlayerImageDto;
+  @Type(() => ImageUploadInput)
+  image?: ImageUploadInput;
 
   @Field(() => PreferredFoot, { nullable: true })
   @IsOptional()
