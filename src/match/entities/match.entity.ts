@@ -1,6 +1,7 @@
 import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { Team } from '../../team/entities/team.entity';
+import { MatchLocation } from '../enums/match-location.enum';
 import { MatchStatus } from '../enums/match-status.enum';
 
 @ObjectType()
@@ -39,4 +40,8 @@ export class Match {
   @Field(() => Int)
   @Column({ name: 'round', type: 'integer', nullable: false })
   round: number;
+
+  @Field(() => MatchLocation, { nullable: true })
+  @Column({ name: 'location', type: 'enum', enum: MatchLocation, nullable: true })
+  location: MatchLocation | null;
 }
