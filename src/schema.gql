@@ -210,8 +210,8 @@ type Prediction {
   id: ID!
   match: Match!
   pointsEarned: Int
-  predictedScore1: Int
-  predictedScore2: Int
+  predictedScore1: Int!
+  predictedScore2: Int!
   updatedAt: Date!
   user: User!
 }

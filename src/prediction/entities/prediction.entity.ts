@@ -36,13 +36,13 @@ export class Prediction {
   @JoinColumn({ name: 'match_id' })
   match: Match;
 
-  @Field(() => Int, { nullable: true })
-  @Column({ name: 'predicted_score1', type: 'integer', nullable: true })
-  predictedScore1: number | null;
+  @Field(() => Int)
+  @Column({ name: 'predicted_score1', type: 'integer', nullable: false })
+  predictedScore1: number;
 
-  @Field(() => Int, { nullable: true })
-  @Column({ name: 'predicted_score2', type: 'integer', nullable: true })
-  predictedScore2: number | null;
+  @Field(() => Int)
+  @Column({ name: 'predicted_score2', type: 'integer', nullable: false })
+  predictedScore2: number;
 
   @Field(() => Int, { nullable: true })
   @Column({ name: 'points_earned', type: 'integer', nullable: true })
