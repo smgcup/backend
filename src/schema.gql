@@ -17,7 +17,7 @@ type AuthResponse {
 input CreateMatchDto {
   date: Date
   firstOpponentId: String!
-  location: MatchLocation!
+  location: MatchLocation
   round: Int!
   secondOpponentId: String!
   status: MatchStatus!
@@ -82,7 +82,7 @@ type Match {
   date: Date
   firstOpponent: Team!
   id: ID!
-  location: MatchLocation!
+  location: MatchLocation
   round: Int!
   score1: Int
   score2: Int
