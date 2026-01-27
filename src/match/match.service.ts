@@ -53,6 +53,7 @@ export class MatchService {
         score1: null,
         score2: null,
         round: createMatchDto.round,
+        location: createMatchDto.location ?? null,
       });
 
       const saved = await this.matchRepository.save(match);
@@ -104,6 +105,9 @@ export class MatchService {
       }
       if (updateMatchDto.round) {
         match.round = updateMatchDto.round;
+      }
+      if (updateMatchDto.location !== undefined) {
+        match.location = updateMatchDto.location ?? null;
       }
 
       await this.matchRepository.save(match);
