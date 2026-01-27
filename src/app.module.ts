@@ -16,6 +16,7 @@ import { MatchEventModule } from './match-event/match-event.module';
 import { UserModule } from './user/user.module';
 import { GeneratorModule } from './generator/generator.module';
 import { ImageModule } from './image/image.module';
+import { PredictionModule } from './prediction/prediction.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { ImageModule } from './image/image.module';
     UserModule,
     GeneratorModule,
     ImageModule,
+    PredictionModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],

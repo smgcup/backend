@@ -52,6 +52,12 @@ input CreatePlayerDto {
   weight: Float!
 }
 
+input CreatePredictionDto {
+  matchId: String!
+  predictedScore1: Int!
+  predictedScore2: Int!
+}
+
 input CreateTeamDto {
   name: String!
 }
@@ -131,11 +137,13 @@ type Mutation {
   createMatchEvent(createMatchEventDto: CreateMatchEventDto!): MatchEvent!
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
+  createPrediction(input: CreatePredictionDto!): Prediction!
   createTeam(createTeamDto: CreateTeamDto!): Team!
   deleteMatch(id: String!): Match!
   deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
   deletePlayer(id: String!): Player!
+  deletePrediction(id: String!): Prediction!
   deleteTeam(id: String!): Team!
   login(loginInput: LoginInput!): AuthResponse!
   register(registerInput: RegisterUserInput!): AuthResponse!
@@ -143,6 +151,7 @@ type Mutation {
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): News!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
+  updatePrediction(id: String!, input: UpdatePredictionDto!): Prediction!
   updateTeam(id: String!, updateTeamDto: UpdateTeamDto!): Team!
   uploadFile(uploadFileDto: UploadFileDto!): UploadResponse!
 }
@@ -196,6 +205,17 @@ type PlayerStats {
   yellowCards: Float!
 }
 
+type Prediction {
+  createdAt: Date!
+  id: ID!
+  match: Match!
+  pointsEarned: Int
+  predictedScore1: Int
+  predictedScore2: Int
+  updatedAt: Date!
+  user: User!
+}
+
 enum PreferredFoot {
   BOTH
   LEFT
@@ -207,10 +227,15 @@ type Query {
   matchById(id: String!): Match!
   matchEvents(matchId: String!): [MatchEvent!]!
   matches: [Match!]!
+  myPredictionForMatch(matchId: String!): Prediction
+  myPredictionStats: UserPredictionStats!
+  myPredictions: [Prediction!]!
   news: [News!]!
   newsById(id: String!): News!
   playerById(id: String!): Player!
   playersLeaderboard(limit: Int! = 20, page: Int! = 1, sortBy: LeaderboardSortType!): PaginatedPlayersResponse!
+  predictionLeaderboard: [UserPredictionStats!]!
+  predictionsByMatch(matchId: String!): [Prediction!]!
   teamById(id: String!): Team!
   teams: [Team!]!
   user: User!
@@ -277,6 +302,11 @@ input UpdatePlayerImageDto {
   mimeType: String!
 }
 
+input UpdatePredictionDto {
+  predictedScore1: Int
+  predictedScore2: Int
+}
+
 input UpdateTeamDto {
   captainId: String
   name: String
@@ -302,4 +332,14 @@ type User {
   lastName: String!
   password: String!
   username: String!
+}
+
+type UserPredictionStats {
+  correctOutcomesCount: Int!
+  exactMatchesCount: Int!
+  id: ID!
+  lastUpdated: Date!
+  totalPoints: Int!
+  totalPredictionsCount: Int!
+  user: User!
 }
