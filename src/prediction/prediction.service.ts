@@ -51,11 +51,6 @@ export class PredictionService {
       throw new ConflictError(PREDICTION_TRANSLATION_CODES.predictionAlreadyExists);
     }
 
-    // Validate scores are non-negative (handled by DTO validation, but double-check)
-    if (createDto.predictedScore1 < 0 || createDto.predictedScore2 < 0) {
-      throw new BadRequestError(PREDICTION_TRANSLATION_CODES.invalidPredictionScores);
-    }
-
     try {
       const prediction = this.predictionRepository.create({
         id: generateUuidv7(),
