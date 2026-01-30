@@ -7,5 +7,6 @@ export const MATCH_EVENT_TRANSLATION_CODES = {
   playerNotInTeam: 'playerNotInTeam',
   playerNotInMatch: 'playerNotInMatch',
   markerEventCannotHavePlayer: 'markerEventCannotHavePlayer',
+  ownGoalCannotHaveAssist: 'ownGoalCannotHaveAssist',
   matchEventCreationFailed: 'matchEventCreationFailed',
 } as const;

@@ -2,6 +2,7 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum MatchEventType {
   GOAL = 'GOAL', // Goal
+  OWN_GOAL = 'OWN_GOAL', // Own goal
   YELLOW_CARD = 'YELLOW_CARD', // Yellow card
   RED_CARD = 'RED_CARD', // Red card
   GOALKEEPER_SAVE = 'GOALKEEPER_SAVE', // Goalkeeper save

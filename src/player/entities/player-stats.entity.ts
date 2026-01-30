@@ -40,4 +40,8 @@ export class PlayerStats {
   @Field(() => Number)
   @Column({ name: 'goalkeeper_saves', default: 0 })
   goalkeeperSaves: number;
+
+  @Field(() => Number)
+  @Column({ name: 'own_goals', default: 0 })
+  ownGoals: number;
 }

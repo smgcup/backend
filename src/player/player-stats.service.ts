@@ -79,6 +79,8 @@ export class PlayerStatsService {
         return 'redCards';
       case MatchEventType.GOALKEEPER_SAVE:
         return 'goalkeeperSaves';
+      case MatchEventType.OWN_GOAL:
+        return 'ownGoals';
       default:
         return null;
     }
