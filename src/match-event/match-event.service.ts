@@ -92,6 +92,21 @@ export class MatchEventService {
         // Sync player stats
         await this.playerStatsService.handleEventCreated(savedEvent, manager);
 
+        // Update match score for goal events
+        const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
+        if (scoringEvents.includes(createMatchEventDto.type) && player) {
+          const isFirstTeam = player.team.id === match.firstOpponent.id;
+          const isOwnGoal = createMatchEventDto.type === MatchEventType.OWN_GOAL;
+
+          // Own goal counts for the opposing team
+          if (isFirstTeam !== isOwnGoal) {
+            match.score1 = (match.score1 ?? 0) + 1;
+          } else {
+            match.score2 = (match.score2 ?? 0) + 1;
+          }
+          await manager.save(match);
+        }
+
         // If the event is FULL_TIME, update match status to FINISHED
         if (createMatchEventDto.type === MatchEventType.FULL_TIME) {
           match.status = MatchStatus.FINISHED;
@@ -113,6 +128,23 @@ export class MatchEventService {
     return await this.dataSource.transaction(async (manager) => {
       // Sync player stats before deletion
       await this.playerStatsService.handleEventDeleted(event, manager);
+
+      // Decrement match score for goal events
+      const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
+      if (scoringEvents.includes(event.type) && event.player) {
+        const match = event.match;
+        const isFirstTeam = event.player.team.id === match.firstOpponent.id;
+        const isOwnGoal = event.type === MatchEventType.OWN_GOAL;
+
+        // Own goal counts for the opposing team
+        if (isFirstTeam !== isOwnGoal) {
+          match.score1 = Math.max((match.score1 ?? 0) - 1, 0);
+        } else {
+          match.score2 = Math.max((match.score2 ?? 0) - 1, 0);
+        }
+        await manager.save(match);
+      }
+
       await manager.remove(event);
       return id;
     });
