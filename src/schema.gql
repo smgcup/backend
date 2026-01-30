@@ -117,6 +117,7 @@ enum MatchEventType {
   GOAL
   GOALKEEPER_SAVE
   HALF_TIME
+  OWN_GOAL
   PENALTY_MISSED
   PENALTY_SCORED
   RED_CARD
@@ -203,6 +204,7 @@ type PlayerStats {
   assists: Float!
   goalkeeperSaves: Float!
   goals: Float!
+  ownGoals: Float!
   penaltiesMissed: Float!
   penaltiesScored: Float!
   playerId: ID!

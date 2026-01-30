@@ -60,6 +60,10 @@ export class MatchEventService {
       }
     }
 
+    if (createMatchEventDto.type === MatchEventType.OWN_GOAL && createMatchEventDto.assistPlayerId) {
+      throw new BadRequestError(MATCH_EVENT_TRANSLATION_CODES.ownGoalCannotHaveAssist);
+    }
+
     const assistPlayer =
       createMatchEventDto.type === MatchEventType.GOAL && createMatchEventDto.assistPlayerId
         ? await this.playerService.getPlayerById(createMatchEventDto.assistPlayerId, {
