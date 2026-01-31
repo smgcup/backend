@@ -130,6 +130,7 @@ export class MatchEventService {
 
     return await this.dataSource.transaction(async (manager) => {
       try {
+        await manager.remove(event);
         // Sync player stats before deletion
         await this.playerStatsService.handleEventDeleted(event, manager);
 
@@ -149,7 +150,6 @@ export class MatchEventService {
           await manager.save(match);
         }
 
-        await manager.remove(event);
         return id;
       } catch (e) {
         this.logger.error(e);
