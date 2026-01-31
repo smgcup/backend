@@ -13,6 +13,7 @@ async function bootstrap() {
         'http://192.168.1.84:3000',
         'https://frontend-rebuild-six.vercel.app',
         'https://www.smgcup.com',
+        'http://192.168.100.244:3000',
       ],
       credentials: true,
     },

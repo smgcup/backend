@@ -13,9 +13,12 @@ import { MatchService } from '../match/match.service';
 import { generateUuidv7 } from '../shared/utils';
 import { Match } from '../match/entities/match.entity';
 import { MatchStatus } from '../match/enums/match-status.enum';
+import { Logger } from '@nestjs/common';
 
 @Injectable()
 export class MatchEventService {
+  private readonly logger = new Logger(MatchEventService.name);
+
   constructor(
     @InjectRepository(MatchEvent)
     private readonly matchEventRepository: Repository<MatchEvent>,
@@ -126,27 +129,35 @@ export class MatchEventService {
     const event = await this.getMatchEventById(id);
 
     return await this.dataSource.transaction(async (manager) => {
-      // Sync player stats before deletion
-      await this.playerStatsService.handleEventDeleted(event, manager);
+      try {
+        // Sync player stats before deletion
+        await this.playerStatsService.handleEventDeleted(event, manager);
 
-      // Decrement match score for goal events
-      const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
-      if (scoringEvents.includes(event.type) && event.player) {
-        const match = event.match;
-        const isFirstTeam = event.player.team.id === match.firstOpponent.id;
-        const isOwnGoal = event.type === MatchEventType.OWN_GOAL;
+        // Decrement match score for goal events
+        const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
+        if (scoringEvents.includes(event.type) && event.player) {
+          const match = event.match;
+          const isFirstTeam = event.player.team.id === match.firstOpponent.id;
+          const isOwnGoal = event.type === MatchEventType.OWN_GOAL;
 
-        // Own goal counts for the opposing team
-        if (isFirstTeam !== isOwnGoal) {
-          match.score1 = Math.max((match.score1 ?? 0) - 1, 0);
-        } else {
-          match.score2 = Math.max((match.score2 ?? 0) - 1, 0);
+          // Own goal counts for the opposing team
+          if (isFirstTeam !== isOwnGoal) {
+            match.score1 = Math.max((match.score1 ?? 0) - 1, 0);
+          } else {
+            match.score2 = Math.max((match.score2 ?? 0) - 1, 0);
+          }
+          await manager.save(match);
         }
-        await manager.save(match);
-      }
 
-      await manager.remove(event);
-      return id;
+        await manager.remove(event);
+        return id;
+      } catch (e) {
+        this.logger.error(e);
+        throw e;
+
+        // console.error(error);
+        // throw new InternalServerError(MATCH_EVENT_TRANSLATION_CODES.matchEventDeletionFailed);
+      }
     });
   }
 
@@ -160,6 +171,8 @@ export class MatchEventService {
       },
     });
     if (!event) {
+      this.logger.error(`Match event not found: ${id}`);
+
       throw new NotFoundError(MATCH_EVENT_TRANSLATION_CODES.matchEventNotFound);
     }
     return event;
