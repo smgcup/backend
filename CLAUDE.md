@@ -66,6 +66,8 @@ JWT-based via `@nestjs/passport`. Use `JwtAuthGuard` on resolvers. The guard ext
 - Config: `src/config/migrations-local.config.ts`
 - Entities discovered via glob pattern in app.module.ts
 
+**IMPORTANT:** Do NOT run any commands that modify the content or formatting of files in `src/db/migrations/`. This includes lint, format, or any auto-fix operations on migration files.
+
 ## Environment Variables
 
 Required: `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`, `JWT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`

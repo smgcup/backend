@@ -243,6 +243,7 @@ type Query {
   playersLeaderboard(limit: Int! = 20, page: Int! = 1, sortBy: LeaderboardSortType!): PaginatedPlayersResponse!
   predictionLeaderboard: [UserPredictionStats!]!
   predictionsByMatch(matchId: String!): [Prediction!]!
+  statistics: StatisticsOutput!
   teamById(id: String!): Team!
   teams: [Team!]!
   user: User!
@@ -263,6 +264,12 @@ input RegisterUserInput {
 
   """Username"""
   username: String!
+}
+
+type StatisticsOutput {
+  matchesPlayedCount: Int!
+  teamsCount: Int!
+  totalGoals: Int!
 }
 
 type Team {
