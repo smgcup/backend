@@ -268,7 +268,10 @@ input RegisterUserInput {
 }
 
 type StatisticsOutput {
+  matchesCount: Int!
   matchesPlayedCount: Int!
+  newsCount: Int!
+  playersCount: Int!
   teamsCount: Int!
   totalGoals: Int!
 }

@@ -5,6 +5,7 @@ import { Team } from '../team/entities/team.entity';
 import { Match } from '../match/entities/match.entity';
 import { MatchEvent } from '../match-event/entities/match-event.entity';
 import { Player } from '../player/entities/player.entity';
+import { News } from '../news/entities/news.entity';
 import { MatchStatus } from '../match/enums/match-status.enum';
 import { MatchEventType } from '../match-event/enums/match-event-type.enum';
 import { StatisticsOutput } from './dto/statistics.output';
@@ -21,12 +22,17 @@ export class StatisticsService {
     private readonly matchEventRepository: Repository<MatchEvent>,
     @InjectRepository(Player)
     private readonly playerRepository: Repository<Player>,
+    @InjectRepository(News)
+    private readonly newsRepository: Repository<News>,
   ) {}
 
   async getStatistics(): Promise<StatisticsOutput> {
-    const [teamsCount, matchesPlayedCount, totalGoals] = await Promise.all([
+    const [teamsCount, playersCount, matchesCount, matchesPlayedCount, newsCount, totalGoals] = await Promise.all([
       this.teamRepository.count(),
+      this.playerRepository.count(),
+      this.matchRepository.count(),
       this.matchRepository.count({ where: { status: MatchStatus.FINISHED } }),
+      this.newsRepository.count(),
       this.matchEventRepository.count({
         where: { type: In([MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED]) },
       }),
@@ -34,7 +40,10 @@ export class StatisticsService {
 
     return {
       teamsCount,
+      playersCount,
+      matchesCount,
       matchesPlayedCount,
+      newsCount,
       totalGoals,
     };
   }
