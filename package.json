@@ -28,6 +28,9 @@
     "seed:schedule-events": "ts-node -r tsconfig-paths/register src/db/seed/schedule-events.seed.ts",
     "gemini:create-file-search-store": "ts-node -r tsconfig-paths/register scripts/create-file-search-store.ts",
     "gemini:upload-files-to-file-search-store": "ts-node -r tsconfig-paths/register scripts/upload-files-to-gemini-file-search-store.ts",
+    "backup:match-events": "ts-node -r tsconfig-paths/register scripts/backup-match-events.ts",
+    "check:player-stats": "ts-node -r tsconfig-paths/register scripts/check-player-stats.ts",
+    "check:player-stats-detailed": "ts-node -r tsconfig-paths/register scripts/check-player-stats-detailed.ts",
     "prepare": "husky",
     "lint-staged": {
       "*.{js,jsx,ts,tsx}": [
