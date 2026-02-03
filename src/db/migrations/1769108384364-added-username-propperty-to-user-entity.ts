@@ -1,14 +1,13 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class AddedUsernameProppertyToUserEntity1769108384364 implements MigrationInterface {
-    name = 'AddedUsernameProppertyToUserEntity1769108384364'
+  name = 'AddedUsernameProppertyToUserEntity1769108384364';
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "users" ADD "username" text NOT NULL`);
-    }
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "users" ADD "username" text NOT NULL`);
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "username"`);
-    }
-
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "username"`);
+  }
 }
