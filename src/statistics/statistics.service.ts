@@ -49,33 +49,19 @@ export class StatisticsService {
   }
 
   async getTopPlayers(): Promise<TopPlayerOutput[]> {
-    const players = await this.playerRepository.find({
-      relations: ['stats', 'team'],
-    });
+    const players = await this.playerRepository
+      .createQueryBuilder('player')
+      .leftJoinAndSelect('player.stats', 'stats')
+      .leftJoinAndSelect('player.team', 'team')
+      .orderBy('COALESCE(stats.goals, 0) + COALESCE(stats.penalties_scored, 0)', 'DESC')
+      .addOrderBy('COALESCE(stats.assists, 0)', 'DESC')
+      .addOrderBy('COALESCE(stats.red_cards, 0)', 'ASC')
+      .addOrderBy('COALESCE(stats.yellow_cards, 0)', 'ASC')
+      .addOrderBy('COALESCE(stats.own_goals, 0)', 'ASC')
+      .limit(5)
+      .getMany();
 
-    const sorted = players.sort((a, b) => {
-      const aGoals = (a.stats?.goals ?? 0) + (a.stats?.penaltiesScored ?? 0);
-      const bGoals = (b.stats?.goals ?? 0) + (b.stats?.penaltiesScored ?? 0);
-      if (bGoals !== aGoals) return bGoals - aGoals;
-
-      const aAssists = a.stats?.assists ?? 0;
-      const bAssists = b.stats?.assists ?? 0;
-      if (bAssists !== aAssists) return bAssists - aAssists;
-
-      const aRedCards = a.stats?.redCards ?? 0;
-      const bRedCards = b.stats?.redCards ?? 0;
-      if (aRedCards !== bRedCards) return aRedCards - bRedCards;
-
-      const aYellowCards = a.stats?.yellowCards ?? 0;
-      const bYellowCards = b.stats?.yellowCards ?? 0;
-      if (aYellowCards !== bYellowCards) return aYellowCards - bYellowCards;
-
-      const aOwnGoals = a.stats?.ownGoals ?? 0;
-      const bOwnGoals = b.stats?.ownGoals ?? 0;
-      return aOwnGoals - bOwnGoals;
-    });
-
-    return sorted.slice(0, 5).map((player) => ({
+    return players.map((player) => ({
       id: player.id,
       name: `${player.firstName} ${player.lastName}`,
       teamId: player.team.id,
