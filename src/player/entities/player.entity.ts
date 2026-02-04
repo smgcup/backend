@@ -1,9 +1,9 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Team } from '../../team/entities/team.entity';
 import { PreferredFoot } from '../enums/preferred-foot.enum';
 import { PlayerPosition } from '../enums/player-position.enum';
-import { PlayerStats } from './player-stats.entity';
+import { Stats } from '../../statistics/entities/stats.entity';
 
 @ObjectType()
 @Entity()
@@ -53,9 +53,8 @@ export class Player {
   @Column({ name: 'date_of_birth', type: 'date', nullable: false })
   dateOfBirth: Date;
 
-  @Field(() => PlayerStats, { nullable: true })
-  @OneToOne(() => PlayerStats, (stats) => stats.player)
-  stats?: PlayerStats;
+  @Field(() => Stats)
+  stats: Stats;
 
   @Field(() => Number, { nullable: false })
   get age(): number {

@@ -1,6 +1,7 @@
 import { Entity, PrimaryColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { Player } from '../../player/entities/player.entity';
+import { TeamStats } from './team-stats.entity';
 
 @ObjectType()
 @Entity()
@@ -25,4 +26,7 @@ export class Team {
   @OneToOne(() => Player, { nullable: true })
   @JoinColumn({ name: 'captain_id' })
   captain: Player | null;
+
+  @Field(() => TeamStats)
+  stats: TeamStats;
 }

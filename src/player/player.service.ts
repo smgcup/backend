@@ -8,7 +8,6 @@ import { CreatePlayerDto } from './dto/create-player.dto';
 import { generateUuidv7 } from '../shared/utils';
 import { TeamService } from '../team/team.service';
 import { UpdatePlayerDto } from './dto/update-player.dto';
-import { PlayerStatsService } from './player-stats.service';
 import { ImageService } from '../image/image.service';
 import { LeaderboardSortType } from './enums/leaderboard-sort-type.enum';
 import { PaginatedPlayersResponse } from './dto/paginated-players-response.dto';
@@ -20,7 +19,6 @@ export class PlayerService {
     private playerRepository: Repository<Player>,
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
-    private playerStatsService: PlayerStatsService,
     private imageService: ImageService,
   ) {}
 
@@ -63,7 +61,6 @@ export class PlayerService {
     });
     try {
       const savedPlayer = await this.playerRepository.save(player);
-      await this.playerStatsService.createEmptyStats(savedPlayer.id);
       return savedPlayer;
     } catch {
       throw new InternalServerError(PLAYER_TRANSLATION_CODES.playerCreationFailed);

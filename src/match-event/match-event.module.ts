@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MatchEvent } from './entities/match-event.entity';
 import { MatchEventService } from './match-event.service';
@@ -9,7 +9,12 @@ import { MatchModule } from '../match/match.module';
 import { Match } from '../match/entities/match.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MatchEvent, Match]), PlayerModule, TeamModule, MatchModule],
+  imports: [
+    TypeOrmModule.forFeature([MatchEvent, Match]),
+    forwardRef(() => PlayerModule),
+    forwardRef(() => TeamModule),
+    forwardRef(() => MatchModule),
+  ],
   providers: [MatchEventService, MatchEventResolver],
   exports: [MatchEventService],
 })
