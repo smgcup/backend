@@ -11,3 +11,4 @@ export * from './news.translation-codes';
 export * from './match-event.translation-codes';
 export * from './image.translation-codes';
 export * from './prediction.translation-codes';
+export * from './player-appearance.translation-codes';

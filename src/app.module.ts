@@ -17,6 +17,8 @@ import { UserModule } from './user/user.module';
 import { GeneratorModule } from './generator/generator.module';
 import { ImageModule } from './image/image.module';
 import { PredictionModule } from './prediction/prediction.module';
+import { StatisticsModule } from './statistics/statistics.module';
+import { PlayerAppearanceModule } from './player-appearance/player-appearance.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { PredictionModule } from './prediction/prediction.module';
     GeneratorModule,
     ImageModule,
     PredictionModule,
+    StatisticsModule,
+    PlayerAppearanceModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],

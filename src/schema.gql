@@ -14,6 +14,11 @@ type AuthResponse {
   user: User!
 }
 
+input CreateAllPlayerAppearancesDto {
+  appearances: [PlayerAppearanceInput!]!
+  matchId: String!
+}
+
 input CreateMatchDto {
   date: Date
   firstOpponentId: String!
@@ -139,6 +144,7 @@ enum MatchStatus {
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   adminLogout: AdminLoginResult!
+  createAllPlayerAppearances(input: CreateAllPlayerAppearancesDto!): [PlayerAppearance!]!
   createMatch(createMatchDto: CreateMatchDto!): Match!
   createMatchEvent(createMatchEventDto: CreateMatchEventDto!): MatchEvent!
   createNews(createNewsDto: CreateNewsDto!): News!
@@ -149,6 +155,7 @@ type Mutation {
   deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
   deletePlayer(id: String!): Player!
+  deletePlayerAppearance(matchId: String!, playerId: String!): Boolean!
   deletePrediction(id: String!): Prediction!
   deleteTeam(id: String!): Team!
   login(loginInput: LoginInput!): AuthResponse!
@@ -157,6 +164,7 @@ type Mutation {
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): Boolean!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
+  updatePlayerAppearance(input: UpdatePlayerAppearanceDto!): PlayerAppearance!
   updatePrediction(id: String!, input: UpdatePredictionDto!): Prediction!
   updateTeam(id: String!, updateTeamDto: UpdateTeamDto!): Team!
   uploadFile(uploadFileDto: UploadFileDto!): UploadResponse!
@@ -191,6 +199,20 @@ type Player {
   stats: PlayerStats
   team: Team!
   weight: Float!
+}
+
+type PlayerAppearance {
+  createdAt: Date!
+  level: Int!
+  match: Match!
+  matchId: String!
+  player: Player!
+  playerId: String!
+}
+
+input PlayerAppearanceInput {
+  level: Int!
+  playerId: String!
 }
 
 enum PlayerPosition {
@@ -239,12 +261,16 @@ type Query {
   myPredictions: [Prediction!]!
   news: [News!]!
   newsById(id: String!): News!
+  playerAppearancesByMatch(matchId: String!): [PlayerAppearance!]!
+  playerAppearancesByPlayer(playerId: String!): [PlayerAppearance!]!
   playerById(id: String!): Player!
   playersLeaderboard(limit: Int! = 20, page: Int! = 1, sortBy: LeaderboardSortType!): PaginatedPlayersResponse!
   predictionLeaderboard: [UserPredictionStats!]!
   predictionsByMatch(matchId: String!): [Prediction!]!
+  statistics: StatisticsOutput!
   teamById(id: String!): Team!
   teams: [Team!]!
+  topPlayers: [TopPlayerOutput!]!
   user: User!
 }
 
@@ -265,12 +291,34 @@ input RegisterUserInput {
   username: String!
 }
 
+type StatisticsOutput {
+  matchesCount: Int!
+  matchesPlayedCount: Int!
+  newsCount: Int!
+  playersCount: Int!
+  teamsCount: Int!
+  totalGoals: Int!
+}
+
 type Team {
   captain: Player
   createdAt: Date!
   id: ID!
   name: String!
   players: [Player!]!
+}
+
+type TopPlayerOutput {
+  assists: Int!
+  goals: Int!
+  id: ID!
+  name: String!
+  ownGoals: Int!
+  position: PlayerPosition!
+  redCards: Int!
+  teamId: ID!
+  teamName: String!
+  yellowCards: Int!
 }
 
 input UpdateMatchDto {
@@ -289,6 +337,12 @@ input UpdateNewsDto {
   content: String
   image: ImageUploadInput
   title: String
+}
+
+input UpdatePlayerAppearanceDto {
+  level: Int!
+  matchId: String!
+  playerId: String!
 }
 
 input UpdatePlayerDto {
