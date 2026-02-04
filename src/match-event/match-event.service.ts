@@ -7,7 +7,6 @@ import { BadRequestError, InternalServerError, NotFoundError } from '../exceptio
 import { MATCH_EVENT_TRANSLATION_CODES } from '../exception/translation-codes';
 import { MatchEventType } from './enums/match-event-type.enum';
 import { PlayerService } from '../player/player.service';
-import { PlayerStatsService } from '../player/player-stats.service';
 import { TeamService } from '../team/team.service';
 import { MatchService } from '../match/match.service';
 import { generateUuidv7 } from '../shared/utils';
@@ -27,7 +26,6 @@ export class MatchEventService {
     private readonly dataSource: DataSource,
     private readonly matchService: MatchService,
     private readonly playerService: PlayerService,
-    private readonly playerStatsService: PlayerStatsService,
     private readonly teamService: TeamService,
   ) {}
 
@@ -92,9 +90,6 @@ export class MatchEventService {
 
         const savedEvent = await manager.save(created);
 
-        // Sync player stats
-        // await this.playerStatsService.handleEventCreated(savedEvent, manager);
-
         // Update match score for goal events
         const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
         if (scoringEvents.includes(createMatchEventDto.type) && player) {
@@ -131,8 +126,6 @@ export class MatchEventService {
     return await this.dataSource.transaction(async (manager) => {
       try {
         await manager.remove(event);
-        // Sync player stats before deletion
-        // await this.playerStatsService.handleEventDeleted(event, manager);
 
         // Decrement match score for goal events
         const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
