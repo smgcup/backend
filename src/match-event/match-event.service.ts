@@ -93,7 +93,7 @@ export class MatchEventService {
         const savedEvent = await manager.save(created);
 
         // Sync player stats
-        await this.playerStatsService.handleEventCreated(savedEvent, manager);
+        // await this.playerStatsService.handleEventCreated(savedEvent, manager);
 
         // Update match score for goal events
         const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];
@@ -132,7 +132,7 @@ export class MatchEventService {
       try {
         await manager.remove(event);
         // Sync player stats before deletion
-        await this.playerStatsService.handleEventDeleted(event, manager);
+        // await this.playerStatsService.handleEventDeleted(event, manager);
 
         // Decrement match score for goal events
         const scoringEvents = [MatchEventType.GOAL, MatchEventType.OWN_GOAL, MatchEventType.PENALTY_SCORED];

@@ -43,7 +43,17 @@ export class PlayerResolver {
 
   @ResolveField(() => PlayerStats, { name: 'stats', nullable: true })
   async stats(@Parent() player: Player): Promise<PlayerStats | null> {
-    return await this.playerStatsService.getStatsByPlayerId(player.id);
+    // return await this.playerStatsService.getStatsByPlayerId(player.id);
+    return {
+      goals: await this.playerStatsService.getGoals(player.id),
+      penaltiesScored: await this.playerStatsService.getPenaltiesScored(player.id),
+      penaltiesMissed: await this.playerStatsService.getPenaltiesMissed(player.id),
+      assists: await this.playerStatsService.getAssists(player.id),
+      yellowCards: await this.playerStatsService.getYellowCards(player.id),
+      redCards: await this.playerStatsService.getRedCards(player.id),
+      goalkeeperSaves: await this.playerStatsService.getGoalkeeperSaves(player.id),
+      ownGoals: await this.playerStatsService.getOwnGoals(player.id),
+    };
   }
 
   /**

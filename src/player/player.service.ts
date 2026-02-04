@@ -63,7 +63,7 @@ export class PlayerService {
     });
     try {
       const savedPlayer = await this.playerRepository.save(player);
-      await this.playerStatsService.createEmptyStats(savedPlayer.id);
+      // await this.playerStatsService.createEmptyStats(savedPlayer.id);
       return savedPlayer;
     } catch {
       throw new InternalServerError(PLAYER_TRANSLATION_CODES.playerCreationFailed);

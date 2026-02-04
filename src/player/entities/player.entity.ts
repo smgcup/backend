@@ -54,7 +54,6 @@ export class Player {
   dateOfBirth: Date;
 
   @Field(() => PlayerStats, { nullable: true })
-  @OneToOne(() => PlayerStats, (stats) => stats.player)
   stats?: PlayerStats;
 
   @Field(() => Number, { nullable: false })

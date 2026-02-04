@@ -229,7 +229,6 @@ type PlayerStats {
   ownGoals: Float!
   penaltiesMissed: Float!
   penaltiesScored: Float!
-  playerId: ID!
   redCards: Float!
   yellowCards: Float!
 }
