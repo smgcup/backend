@@ -196,7 +196,7 @@ type Player {
   lastName: String!
   position: PlayerPosition!
   preferredFoot: PreferredFoot!
-  stats: PlayerStats
+  stats: Stats!
   team: Team!
   weight: Float!
 }
@@ -220,17 +220,6 @@ enum PlayerPosition {
   FORWARD
   GOALKEEPER
   MIDFIELDER
-}
-
-type PlayerStats {
-  assists: Float!
-  goalkeeperSaves: Float!
-  goals: Float!
-  ownGoals: Float!
-  penaltiesMissed: Float!
-  penaltiesScored: Float!
-  redCards: Float!
-  yellowCards: Float!
 }
 
 type Prediction {
@@ -299,12 +288,38 @@ type StatisticsOutput {
   totalGoals: Int!
 }
 
+type Stats {
+  assists: Float!
+  cleanSheets: Float!
+  goalkeeperSaves: Float!
+  goals: Float!
+  ownGoals: Float!
+  penaltiesMissed: Float!
+  penaltiesScored: Float!
+  redCards: Float!
+  yellowCards: Float!
+}
+
 type Team {
   captain: Player
   createdAt: Date!
   id: ID!
   name: String!
   players: [Player!]!
+  stats: TeamStats!
+}
+
+type TeamStats {
+  assists: Float!
+  cleanSheets: Float!
+  goalkeeperSaves: Float!
+  goals: Float!
+  goalsConceded: Float!
+  ownGoals: Float!
+  penaltiesMissed: Float!
+  penaltiesScored: Float!
+  redCards: Float!
+  yellowCards: Float!
 }
 
 type TopPlayerOutput {

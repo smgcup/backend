@@ -1,18 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { PlayerStats } from './entities/player-stats.entity';
+import { Stats } from '../statistics/entities/stats.entity';
 import { Player } from './entities/player.entity';
 import { MatchEvent } from '../match-event/entities/match-event.entity';
 import { MatchEventType } from '../match-event/enums/match-event-type.enum';
-
+import { PlayerPosition } from './enums/player-position.enum';
+import { PlayerAppearance } from '../player-appearance/entities/player-appearance.entity';
+import { Match } from '../match/entities/match.entity';
+import { MatchStatus } from '../match/enums/match-status.enum';
+import { NotFoundError } from '../exception/exceptions';
+import { PLAYER_TRANSLATION_CODES } from '../exception/translation-codes/player.translation-codes';
 @Injectable()
 export class PlayerStatsService {
   constructor(
-    @InjectRepository(PlayerStats)
-    private readonly statsRepository: Repository<PlayerStats>,
+    @InjectRepository(Stats)
+    private readonly statsRepository: Repository<Stats>,
     @InjectRepository(MatchEvent)
     private readonly matchEventRepository: Repository<MatchEvent>,
+    @InjectRepository(PlayerAppearance)
+    private readonly playerAppearanceRepository: Repository<PlayerAppearance>,
+    @InjectRepository(Match)
+    private readonly matchRepository: Repository<Match>,
   ) {}
 
   private async getMatchEventsCountByPlayerId(playerId: Player['id'], types: MatchEventType[]) {
@@ -99,5 +108,45 @@ export class PlayerStatsService {
    */
   async getOwnGoals(playerId: Player['id']) {
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.OWN_GOAL]);
+  }
+
+  /**
+   * Method to get the number of clean sheets a player has kept
+   * @param playerId - The ID of the player to get the clean sheets for
+   * @returns The number of clean sheets the player has kept
+   */
+  async getCleanSheets(player: Player) {
+    if (player.position !== PlayerPosition.GOALKEEPER && player.position !== PlayerPosition.DEFENDER) {
+      return null;
+    }
+    const matchIds = await this.playerAppearanceRepository
+      .find({
+        where: {
+          playerId: player.id,
+        },
+      })
+      .then((playerAppearances) => playerAppearances.map((playerAppearance) => playerAppearance.matchId));
+
+    const teamId = player.team?.id;
+    if (!teamId) {
+      throw new NotFoundError(PLAYER_TRANSLATION_CODES.playerNotFound);
+    }
+
+    return await this.matchRepository.count({
+      where: [
+        {
+          id: In(matchIds),
+          firstOpponent: { id: teamId },
+          score2: 0,
+          status: MatchStatus.FINISHED,
+        },
+        {
+          id: In(matchIds),
+          secondOpponent: { id: teamId },
+          score1: 0,
+          status: MatchStatus.FINISHED,
+        },
+      ],
+    });
   }
 }

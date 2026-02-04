@@ -5,12 +5,15 @@ import { CreateTeamDto } from './dto/create-team.dto';
 import { Player } from '../player/entities/player.entity';
 import { PlayerService } from '../player/player.service';
 import { UpdateTeamDto } from './dto/update-team.dto';
+import { TeamStatsService } from './team.stats.service';
+import { TeamStats } from './entities/team-stats.entity';
 
 @Resolver(() => Team)
 export class TeamResolver {
   constructor(
     private readonly teamService: TeamService,
     private readonly playerService: PlayerService,
+    private readonly teamStatsService: TeamStatsService,
   ) {}
 
   /**
@@ -60,5 +63,24 @@ export class TeamResolver {
   @Mutation(() => Team, { name: 'deleteTeam' })
   async deleteTeam(@Args('id', { type: () => String }) id: string): Promise<Team> {
     return await this.teamService.deleteTeam(id);
+  }
+
+  @ResolveField(() => TeamStats, { name: 'stats' })
+  async stats(@Parent() team: Team) {
+    const playerIds = await this.playerService
+      .getPlayersByTeamId(team.id)
+      .then((players) => players.map((player) => player.id));
+    return {
+      goals: await this.teamStatsService.getGoals(playerIds),
+      penaltiesScored: await this.teamStatsService.getPenaltiesScored(playerIds),
+      penaltiesMissed: await this.teamStatsService.getPenaltiesMissed(playerIds),
+      assists: await this.teamStatsService.getAssists(playerIds),
+      yellowCards: await this.teamStatsService.getYellowCards(playerIds),
+      redCards: await this.teamStatsService.getRedCards(playerIds),
+      goalkeeperSaves: await this.teamStatsService.getGoalkeeperSaves(playerIds),
+      ownGoals: await this.teamStatsService.getOwnGoals(playerIds),
+      cleanSheets: await this.teamStatsService.getCleanSheets(team?.id),
+      goalsConceded: await this.teamStatsService.getGoalsConceded(team?.id),
+    };
   }
 }

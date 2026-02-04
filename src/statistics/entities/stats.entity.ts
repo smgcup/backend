@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class PlayerStats {
+export class Stats {
   @Field(() => Number)
   goals: number;
 
@@ -25,4 +25,7 @@ export class PlayerStats {
 
   @Field(() => Number)
   ownGoals: number;
+
+  @Field(() => Number)
+  cleanSheets: number | null;
 }

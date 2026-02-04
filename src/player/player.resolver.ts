@@ -4,7 +4,7 @@ import { PlayerService } from './player.service';
 import { CreatePlayerDto } from './dto/create-player.dto';
 import { UpdatePlayerDto } from './dto/update-player.dto';
 import { PlayerStatsService } from './player-stats.service';
-import { PlayerStats } from './entities/player-stats.entity';
+import { Stats } from '../statistics/entities/stats.entity';
 import { LeaderboardSortType } from './enums/leaderboard-sort-type.enum';
 import { PaginatedPlayersResponse } from './dto/paginated-players-response.dto';
 
@@ -41,9 +41,8 @@ export class PlayerResolver {
     return await this.playerService.getPlayersLeaderboard(sortBy, page, limit);
   }
 
-  @ResolveField(() => PlayerStats, { name: 'stats', nullable: true })
-  async stats(@Parent() player: Player): Promise<PlayerStats | null> {
-    // return await this.playerStatsService.getStatsByPlayerId(player.id);
+  @ResolveField(() => Stats, { name: 'stats' })
+  async stats(@Parent() player: Player) {
     return {
       goals: await this.playerStatsService.getGoals(player.id),
       penaltiesScored: await this.playerStatsService.getPenaltiesScored(player.id),
@@ -53,6 +52,7 @@ export class PlayerResolver {
       redCards: await this.playerStatsService.getRedCards(player.id),
       goalkeeperSaves: await this.playerStatsService.getGoalkeeperSaves(player.id),
       ownGoals: await this.playerStatsService.getOwnGoals(player.id),
+      cleanSheets: await this.playerStatsService.getCleanSheets(player),
     };
   }
 
