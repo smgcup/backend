@@ -118,7 +118,7 @@ export class MatchService {
         match.location = updateMatchDto.location ?? null;
       }
       if (updateMatchDto.mvpId !== undefined) {
-        match.mvp = updateMatchDto.mvpId ? { id: updateMatchDto.mvpId } as Player : null;
+        match.mvp = updateMatchDto.mvpId ? ({ id: updateMatchDto.mvpId } as Player) : null;
       }
 
       await this.matchRepository.save(match);

@@ -14,9 +14,20 @@ import { PaginatedPlayersResponse } from './dto/paginated-players-response.dto';
 import { PlayerPosition } from './enums/player-position.enum';
 import { MatchEventType } from '../match-event/enums/match-event-type.enum';
 import { MatchEvent } from '../match-event/entities/match-event.entity';
+import { PlayerStatsService } from './player-stats.service';
+import { Stats } from '../statistics/entities/stats.entity';
 
 @Injectable()
 export class PlayerService {
+  private readonly playersCache = new Map<
+    string,
+    {
+      result: Player[];
+      timestamp: number;
+    }
+  >();
+  private readonly CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
   constructor(
     @InjectRepository(Player)
     private playerRepository: Repository<Player>,
@@ -25,8 +36,24 @@ export class PlayerService {
     @Inject(forwardRef(() => TeamService))
     private teamService: TeamService,
     private imageService: ImageService,
+    private playerStatsService: PlayerStatsService,
   ) {}
 
+  private async getPlayers(): Promise<Player[]> {
+    const cached = this.playersCache.get('all');
+    const now = Date.now();
+
+    if (cached && now - cached.timestamp < this.CACHE_TTL) {
+      return cached.result;
+    }
+
+    const allPlayers = await this.playerRepository.find({ relations: ['team'] });
+    this.playersCache.set('all', {
+      result: allPlayers,
+      timestamp: now,
+    });
+    return allPlayers;
+  }
   /**
    * Method to get a player by its ID
    * @param id - The ID of the player to get
@@ -122,32 +149,70 @@ export class PlayerService {
   ): Promise<PaginatedPlayersResponse> {
     const offset = (page - 1) * limit;
 
-    const queryBuilder = this.playerRepository
-      .createQueryBuilder('player')
-      .leftJoinAndSelect('player.stats', 'stats')
-      .leftJoinAndSelect('player.team', 'team');
+    const allPlayers = await this.getPlayers();
 
     // For clean sheets, filter to only goalkeepers
-    if (sortBy === LeaderboardSortType.CLEAN_SHEETS) {
-      queryBuilder.where('player.position = :position', {
-        position: PlayerPosition.GOALKEEPER,
-      });
+    const players =
+      sortBy === LeaderboardSortType.CLEAN_SHEETS
+        ? allPlayers.filter((player) => player.position === PlayerPosition.GOALKEEPER)
+        : allPlayers;
+
+    const playersWithStats = await Promise.all(
+      players.map(async (player) => {
+        const [goals, assists, yellowCards, redCards, cleanSheets] = await Promise.all([
+          this.playerStatsService.getGoals(player.id),
+          this.playerStatsService.getAssists(player.id),
+          this.playerStatsService.getYellowCards(player.id),
+          this.playerStatsService.getRedCards(player.id),
+          this.playerStatsService.getCleanSheets(player),
+        ]);
+        return {
+          ...player,
+          age: player.age,
+          stats: {
+            goals,
+            assists,
+            yellowCards,
+            redCards,
+            cleanSheets: cleanSheets ?? 0,
+          } as Stats,
+        };
+      }),
+    );
+    switch (sortBy) {
+      case LeaderboardSortType.GOALS:
+        playersWithStats.sort((a, b) => b.stats.goals - a.stats.goals);
+        break;
+      case LeaderboardSortType.ASSISTS:
+        playersWithStats.sort((a, b) => b.stats.assists - a.stats.assists);
+        break;
+      case LeaderboardSortType.CLEAN_SHEETS:
+        playersWithStats.sort((a, b) => (b.stats.cleanSheets ?? 0) - (a.stats.cleanSheets ?? 0));
+        break;
+      case LeaderboardSortType.RED_CARDS:
+        playersWithStats.sort((a, b) => b.stats.redCards - a.stats.redCards);
+        break;
+      case LeaderboardSortType.YELLOW_CARDS:
+        playersWithStats.sort((a, b) => b.stats.yellowCards - a.stats.yellowCards);
+        break;
+      default:
+        throw new BadRequestError(PLAYER_TRANSLATION_CODES.invalidSortType);
     }
+    // // Apply sorting based on the stat type
+    // const orderColumn = this.getOrderColumnForSortType(sortBy);
+    // queryBuilder.orderBy(orderColumn, 'DESC');
 
-    // Apply sorting based on the stat type
-    const orderColumn = this.getOrderColumnForSortType(sortBy);
-    queryBuilder.orderBy(orderColumn, 'DESC');
+    // // Get total count for pagination info
+    // const totalCount = await queryBuilder.getCount();
 
-    // Get total count for pagination info
-    const totalCount = await queryBuilder.getCount();
+    // // Apply pagination
+    // const players = await queryBuilder.skip(offset).take(limit).getMany();
 
-    // Apply pagination
-    const players = await queryBuilder.skip(offset).take(limit).getMany();
-
+    const totalCount = playersWithStats.length;
     return {
-      players,
+      players: playersWithStats.slice(offset, offset + limit),
       totalCount,
-      hasMore: offset + players.length < totalCount,
+      hasMore: offset + limit < totalCount,
     };
   }
 

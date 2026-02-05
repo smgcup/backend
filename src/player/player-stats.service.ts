@@ -11,8 +11,30 @@ import { Match } from '../match/entities/match.entity';
 import { MatchStatus } from '../match/enums/match-status.enum';
 import { NotFoundError } from '../exception/exceptions';
 import { PLAYER_TRANSLATION_CODES } from '../exception/translation-codes/player.translation-codes';
+
+export interface PlayerStats {
+  goals: number;
+  penaltiesScored: number;
+  penaltiesMissed: number;
+  assists: number;
+  yellowCards: number;
+  redCards: number;
+  goalkeeperSaves: number;
+  ownGoals: number;
+  cleanSheets: number | null;
+}
+
 @Injectable()
 export class PlayerStatsService {
+  private readonly matchEventsCache = new Map<
+    string,
+    {
+      result: MatchEvent[];
+      timestamp: number;
+    }
+  >();
+  private readonly CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
   constructor(
     @InjectRepository(Stats)
     private readonly statsRepository: Repository<Stats>,
@@ -23,6 +45,87 @@ export class PlayerStatsService {
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
   ) {}
+
+  private async getMatchEvents(): Promise<MatchEvent[]> {
+    const cached = this.matchEventsCache.get('all');
+    const now = Date.now();
+
+    if (cached && now - cached.timestamp < this.CACHE_TTL) {
+      return cached.result;
+    }
+
+    const allEvents = await this.matchEventRepository.find();
+    this.matchEventsCache.set('all', {
+      result: allEvents,
+      timestamp: now,
+    });
+    return allEvents;
+  }
+
+  /**
+   * Optimized method to get all stats for a player in a single pass
+   * @param player - The player to get the stats for
+   * @returns All stats for the player
+   */
+  async getAllStatsForPlayer(player: Player): Promise<PlayerStats> {
+    const matchEvents = await this.getMatchEvents();
+
+    let goals = 0;
+    let penaltiesScored = 0;
+    let penaltiesMissed = 0;
+    let assists = 0;
+    let yellowCards = 0;
+    let redCards = 0;
+    let goalkeeperSaves = 0;
+    let ownGoals = 0;
+
+    for (const event of matchEvents) {
+      if (event.playerId === player.id) {
+        switch (event.type) {
+          case MatchEventType.GOAL:
+            goals++;
+            break;
+          case MatchEventType.PENALTY_SCORED:
+            goals++;
+            penaltiesScored++;
+            break;
+          case MatchEventType.PENALTY_MISSED:
+            penaltiesMissed++;
+            break;
+          case MatchEventType.YELLOW_CARD:
+            yellowCards++;
+            break;
+          case MatchEventType.RED_CARD:
+            redCards++;
+            break;
+          case MatchEventType.GOALKEEPER_SAVE:
+            goalkeeperSaves++;
+            break;
+          case MatchEventType.OWN_GOAL:
+            ownGoals++;
+            break;
+        }
+      }
+
+      if (event.assistPlayerId === player.id && event.type === MatchEventType.GOAL) {
+        assists++;
+      }
+    }
+
+    const cleanSheets = await this.getCleanSheets(player);
+
+    return {
+      goals,
+      penaltiesScored,
+      penaltiesMissed,
+      assists,
+      yellowCards,
+      redCards,
+      goalkeeperSaves,
+      ownGoals,
+      cleanSheets,
+    };
+  }
 
   private async getMatchEventsCountByPlayerId(playerId: Player['id'], types: MatchEventType[]) {
     return await this.matchEventRepository.count({
@@ -39,6 +142,14 @@ export class PlayerStatsService {
    * @returns The number of goals the player has scored
    */
   async getGoals(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter(
+        (event) =>
+          event.playerId === playerId &&
+          (event.type === MatchEventType.GOAL || event.type === MatchEventType.PENALTY_SCORED),
+      ).length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.GOAL, MatchEventType.PENALTY_SCORED]);
   }
 
@@ -48,6 +159,11 @@ export class PlayerStatsService {
    * @returns The number of penalties scored the player has scored
    */
   async getPenaltiesScored(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.PENALTY_SCORED)
+        .length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.PENALTY_SCORED]);
   }
 
@@ -57,6 +173,11 @@ export class PlayerStatsService {
    * @returns The number of penalties missed the player has missed
    */
   async getPenaltiesMissed(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.PENALTY_MISSED)
+        .length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.PENALTY_MISSED]);
   }
 
@@ -66,10 +187,15 @@ export class PlayerStatsService {
    * @returns The number of assists the player has made
    */
   async getAssists(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.assistPlayerId === playerId && event.type === MatchEventType.GOAL)
+        .length;
+    }
     return await this.matchEventRepository.count({
       where: {
         assistPlayerId: playerId,
-        type: In([MatchEventType.GOAL, MatchEventType.PENALTY_SCORED]),
+        type: In([MatchEventType.GOAL]),
       },
     });
   }
@@ -80,6 +206,11 @@ export class PlayerStatsService {
    * @returns The number of yellow cards the player has received
    */
   async getYellowCards(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.YELLOW_CARD)
+        .length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.YELLOW_CARD]);
   }
 
@@ -89,6 +220,11 @@ export class PlayerStatsService {
    * @returns The number of red cards the player has received
    */
   async getRedCards(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.RED_CARD)
+        .length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.RED_CARD]);
   }
 
@@ -98,6 +234,11 @@ export class PlayerStatsService {
    * @returns The number of goalkeeper saves the player has made
    */
   async getGoalkeeperSaves(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.GOALKEEPER_SAVE)
+        .length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.GOALKEEPER_SAVE]);
   }
 
@@ -107,6 +248,11 @@ export class PlayerStatsService {
    * @returns The number of own goals the player has scored
    */
   async getOwnGoals(playerId: Player['id']) {
+    const matchEvents = await this.getMatchEvents();
+    if (matchEvents) {
+      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.OWN_GOAL)
+        .length;
+    }
     return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.OWN_GOAL]);
   }
 
