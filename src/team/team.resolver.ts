@@ -27,8 +27,8 @@ export class TeamResolver {
   }
 
   @Query(() => [Team], { name: 'teams' })
-  async teams(): Promise<Team[]> {
-    return await this.teamService.getTeams();
+  async teams(@Args('leaderboardOrder', { type: () => Boolean, defaultValue: false }) leaderboardOrder: boolean) {
+    return await this.teamService.getTeams(leaderboardOrder);
   }
 
   @ResolveField(() => [Player], { name: 'players' })
@@ -81,6 +81,11 @@ export class TeamResolver {
       ownGoals: await this.teamStatsService.getOwnGoals(playerIds),
       cleanSheets: await this.teamStatsService.getCleanSheets(team?.id),
       goalsConceded: await this.teamStatsService.getGoalsConceded(team?.id),
+      points: await this.teamStatsService.getPoints(team?.id),
+      wins: await this.teamStatsService.getWLD(team?.id).then((wld) => wld.wins),
+      draws: await this.teamStatsService.getWLD(team?.id).then((wld) => wld.draws),
+      losses: await this.teamStatsService.getWLD(team?.id).then((wld) => wld.losses),
+      matchesPlayed: await this.teamStatsService.getMatchesPlayed(team?.id),
     };
   }
 }

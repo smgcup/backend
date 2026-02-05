@@ -9,6 +9,7 @@ import { generateUuidv7 } from '../shared/utils';
 import { InternalServerError } from '../exception/exceptions';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { PlayerService } from '../player/player.service';
+import { TeamStatsService } from './team.stats.service';
 
 @Injectable()
 export class TeamService {
@@ -17,6 +18,7 @@ export class TeamService {
     private teamRepository: Repository<Team>,
     @Inject(forwardRef(() => PlayerService))
     private playerService: PlayerService,
+    private teamStatsService: TeamStatsService,
   ) {}
 
   /**
@@ -37,8 +39,56 @@ export class TeamService {
    * Method to get all teams
    * @returns All teams
    */
-  async getTeams(): Promise<Team[]> {
-    return await this.teamRepository.find();
+  async getTeams(leaderboardOrder: boolean = false) {
+    const teams = await this.teamRepository.find({
+      relations: leaderboardOrder ? { players: true } : undefined,
+    });
+    if (leaderboardOrder) {
+      const playerIdsByTeam = (team: Team) => (Array.isArray(team.players) ? team.players.map((p) => p.id) : []);
+      const entries = await Promise.all(
+        teams.map(async (team) => {
+          const playerIds = playerIdsByTeam(team);
+          const [points, goals, goalsConceded, yellowCards, redCards] = await Promise.all([
+            this.teamStatsService.getPoints(team.id),
+            this.teamStatsService.getGoals(playerIds),
+            this.teamStatsService.getGoalsConceded(team.id),
+            this.teamStatsService.getYellowCards(playerIds),
+            this.teamStatsService.getRedCards(playerIds),
+          ]);
+          return {
+            team,
+            points,
+            goals,
+            goalsConceded,
+            goalDifference: goals - goalsConceded,
+            yellowCards,
+            redCards,
+          };
+        }),
+      );
+      const teamIds = entries.map((e) => e.team.id);
+      const h2hMap = new Map<string, 1 | -1 | 0>();
+      await Promise.all(
+        teamIds.flatMap((idA, i) =>
+          teamIds.slice(i + 1).map(async (idB) => {
+            const result = await this.teamStatsService.getHeadToHeadResult(idA, idB);
+            h2hMap.set(`${idA}-${idB}`, result);
+            h2hMap.set(`${idB}-${idA}`, result === 0 ? 0 : result === 1 ? -1 : 1);
+          }),
+        ),
+      );
+      const sorted = entries.sort((a, b) => {
+        if (a.points !== b.points) return b.points - a.points;
+        const h2h = h2hMap.get(`${a.team.id}-${b.team.id}`) ?? 0;
+        if (h2h !== 0) return h2h === 1 ? -1 : 1;
+        if (a.goalDifference !== b.goalDifference) return b.goalDifference - a.goalDifference;
+        if (a.goals !== b.goals) return b.goals - a.goals;
+        if (a.redCards !== b.redCards) return a.redCards - b.redCards;
+        return a.yellowCards - b.yellowCards;
+      });
+      return sorted.map((e) => e.team);
+    }
+    return teams;
   }
 
   /**
