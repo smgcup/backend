@@ -80,4 +80,9 @@ export class PlayerResolver {
   async deletePlayer(@Args('id', { type: () => String }) id: string): Promise<Player> {
     return await this.playerService.deletePlayer(id);
   }
+
+  @Query(() => [Player], { name: 'topPlayers', nullable: false })
+  async topPlayers() {
+    return await this.playerService.getTopPlayers();
+  }
 }

@@ -12,8 +12,8 @@ export class StatisticsResolver {
     return this.statisticsService.getStatistics();
   }
 
-  @Query(() => [TopPlayerOutput], { name: 'topPlayers' })
-  getTopPlayers(): Promise<TopPlayerOutput[]> {
-    return this.statisticsService.getTopPlayers();
-  }
+  // @Query(() => [TopPlayerOutput], { name: 'topPlayers' })
+  // getTopPlayers(): Promise<TopPlayerOutput[]> {
+  //   return this.statisticsService.getTopPlayers();
+  // }
 }
