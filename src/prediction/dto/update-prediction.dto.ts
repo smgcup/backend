@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, Min } from 'class-validator';
 
 @InputType()
 export class UpdatePredictionDto {
@@ -14,4 +14,9 @@ export class UpdatePredictionDto {
   @IsInt()
   @Min(0)
   predictedScore2?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isBoosted?: boolean;
 }

@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsInt, IsNotEmpty, IsString, IsUUID, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { PREDICTION_TRANSLATION_CODES } from '../../exception/translation-codes/prediction.translation-codes';
 
 @InputType()
@@ -21,4 +21,9 @@ export class CreatePredictionDto {
   @IsInt()
   @Min(0, { message: PREDICTION_TRANSLATION_CODES.invalidPredictionScores })
   predictedScore2: number;
+
+  @Field(() => Boolean, { nullable: true, defaultValue: false })
+  @IsOptional()
+  @IsBoolean()
+  isBoosted?: boolean;
 }

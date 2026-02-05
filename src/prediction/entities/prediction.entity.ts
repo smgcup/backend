@@ -48,6 +48,10 @@ export class Prediction {
   @Column({ name: 'points_earned', type: 'integer', nullable: true })
   pointsEarned: number | null;
 
+  @Field(() => Boolean)
+  @Column({ name: 'is_boosted', type: 'boolean', nullable: false, default: false })
+  isBoosted: boolean;
+
   @Field(() => Date)
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: false })
   createdAt: Date;

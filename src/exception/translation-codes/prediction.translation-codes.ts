@@ -9,6 +9,9 @@ export const PREDICTION_TRANSLATION_CODES = {
   matchAlreadyStarted: 'matchAlreadyStarted',
   invalidPredictionScores: 'invalidPredictionScores',
 
+  // Booster
+  boosterAlreadyUsed: 'boosterAlreadyUsed',
+
   // Persistence
   predictionCreationFailed: 'predictionCreationFailed',
   predictionUpdateFailed: 'predictionUpdateFailed',
