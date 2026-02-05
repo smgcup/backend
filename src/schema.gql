@@ -258,7 +258,7 @@ type Query {
   statistics: StatisticsOutput!
   teamById(id: String!): Team!
   teams: [Team!]!
-  topPlayers: [TopPlayerOutput!]!
+  topPlayers: [Player!]!
   user: User!
 }
 
@@ -320,19 +320,6 @@ type TeamStats {
   penaltiesScored: Float!
   redCards: Float!
   yellowCards: Float!
-}
-
-type TopPlayerOutput {
-  assists: Int!
-  goals: Int!
-  id: ID!
-  name: String!
-  ownGoals: Int!
-  position: PlayerPosition!
-  redCards: Int!
-  teamId: ID!
-  teamName: String!
-  yellowCards: Int!
 }
 
 input UpdateMatchDto {
