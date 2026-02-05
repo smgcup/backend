@@ -23,7 +23,6 @@ export class CreatePredictionDto {
   predictedScore2: number;
 
   @Field(() => Boolean, { nullable: true, defaultValue: false })
-  @IsOptional()
   @IsBoolean()
   isBoosted?: boolean;
 }

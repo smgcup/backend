@@ -213,7 +213,11 @@ export class PredictionService {
     return prediction;
   }
 
-  private async ensureSingleBoosterPerRound(userId: string, round: number, excludePredictionId?: string): Promise<void> {
+  private async ensureSingleBoosterPerRound(
+    userId: string,
+    round: number,
+    excludePredictionId?: string,
+  ): Promise<void> {
     const query = this.predictionRepository
       .createQueryBuilder('prediction')
       .innerJoin('prediction.match', 'match')
