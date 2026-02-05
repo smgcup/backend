@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Match } from './entities/match.entity';
 import { Team } from '../team/entities/team.entity';
+import { Player } from '../player/entities/player.entity';
 import { BadRequestError, InternalServerError, NotFoundError } from '../exception/exceptions';
 import { MATCH_TRANSLATION_CODES } from '../exception/translation-codes/match.translation-codes';
 import { generateUuidv7 } from '../shared/utils';
@@ -19,11 +20,13 @@ export class MatchService {
     private readonly matchRepository: Repository<Match>,
     @InjectRepository(Team)
     private readonly teamRepository: Repository<Team>,
+    @InjectRepository(Player)
+    private readonly playerRepository: Repository<Player>,
   ) {}
 
   async getMatches(): Promise<Match[]> {
     return await this.matchRepository.find({
-      relations: { firstOpponent: true, secondOpponent: true },
+      relations: { firstOpponent: true, secondOpponent: true, mvp: true },
       order: { date: 'ASC' },
     });
   }
@@ -31,7 +34,7 @@ export class MatchService {
   async getMatchById(id: string): Promise<Match> {
     const match = await this.matchRepository.findOne({
       where: { id },
-      relations: { firstOpponent: true, secondOpponent: true },
+      relations: { firstOpponent: true, secondOpponent: true, mvp: true },
     });
     if (!match) {
       throw new NotFoundError(MATCH_TRANSLATION_CODES.matchNotFound);
@@ -54,6 +57,7 @@ export class MatchService {
         score2: null,
         round: createMatchDto.round,
         location: createMatchDto.location ?? null,
+        mvp: null,
       });
 
       const saved = await this.matchRepository.save(match);
@@ -84,6 +88,10 @@ export class MatchService {
     const nextScore2 = updateMatchDto.score2 ?? match.score2 ?? null;
     this.assertScoresAllowed(nextStatus, nextScore1, nextScore2);
 
+    if (updateMatchDto.mvpId) {
+      await this.assertMvpBelongsToMatch(updateMatchDto.mvpId, nextFirstOpponentId, nextSecondOpponentId);
+    }
+
     try {
       if (updateMatchDto.firstOpponentId) {
         match.firstOpponent = { id: updateMatchDto.firstOpponentId } as Team;
@@ -108,6 +116,9 @@ export class MatchService {
       }
       if (updateMatchDto.location !== undefined) {
         match.location = updateMatchDto.location ?? null;
+      }
+      if (updateMatchDto.mvpId !== undefined) {
+        match.mvp = updateMatchDto.mvpId ? { id: updateMatchDto.mvpId } as Player : null;
       }
 
       await this.matchRepository.save(match);
@@ -175,6 +186,25 @@ export class MatchService {
     const allowed = nextStatus === MatchStatus.LIVE || nextStatus === MatchStatus.FINISHED;
     if (!allowed && (nextScore1 !== null || nextScore2 !== null)) {
       throw new BadRequestError(MATCH_TRANSLATION_CODES.scoreNotAllowedForStatus);
+    }
+  }
+
+  private async assertMvpBelongsToMatch(
+    mvpId: string,
+    firstOpponentId: string,
+    secondOpponentId: string,
+  ): Promise<void> {
+    const player = await this.playerRepository.findOne({
+      where: { id: mvpId },
+      relations: { team: true },
+    });
+
+    if (!player) {
+      throw new NotFoundError(MATCH_TRANSLATION_CODES.mvpMustBelongToMatchTeam);
+    }
+
+    if (player.team.id !== firstOpponentId && player.team.id !== secondOpponentId) {
+      throw new BadRequestError(MATCH_TRANSLATION_CODES.mvpMustBelongToMatchTeam);
     }
   }
 }

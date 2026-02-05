@@ -51,6 +51,10 @@ export class PredictionService {
       throw new ConflictError(PREDICTION_TRANSLATION_CODES.predictionAlreadyExists);
     }
 
+    if (createDto.isBoosted) {
+      await this.ensureSingleBoosterPerRound(userId, match.round);
+    }
+
     try {
       const prediction = this.predictionRepository.create({
         id: generateUuidv7(),
@@ -59,6 +63,7 @@ export class PredictionService {
         predictedScore1: createDto.predictedScore1,
         predictedScore2: createDto.predictedScore2,
         pointsEarned: null,
+        isBoosted: createDto.isBoosted ?? false,
       });
 
       const saved = await this.predictionRepository.save(prediction);
@@ -94,12 +99,19 @@ export class PredictionService {
       throw new BadRequestError(PREDICTION_TRANSLATION_CODES.matchAlreadyStarted);
     }
 
+    if (updateDto.isBoosted) {
+      await this.ensureSingleBoosterPerRound(userId, match.round, predictionId);
+    }
+
     try {
       if (typeof updateDto.predictedScore1 !== 'undefined') {
         prediction.predictedScore1 = updateDto.predictedScore1;
       }
       if (typeof updateDto.predictedScore2 !== 'undefined') {
         prediction.predictedScore2 = updateDto.predictedScore2;
+      }
+      if (typeof updateDto.isBoosted !== 'undefined') {
+        prediction.isBoosted = updateDto.isBoosted;
       }
 
       await this.predictionRepository.save(prediction);
@@ -201,6 +213,26 @@ export class PredictionService {
     return prediction;
   }
 
+  private async ensureSingleBoosterPerRound(userId: string, round: number, excludePredictionId?: string): Promise<void> {
+    const query = this.predictionRepository
+      .createQueryBuilder('prediction')
+      .innerJoin('prediction.match', 'match')
+      .where('prediction.userId = :userId', { userId })
+      .andWhere('prediction.isBoosted = true')
+      .andWhere('match.round = :round', { round });
+
+    if (excludePredictionId) {
+      query.andWhere('prediction.id != :excludePredictionId', { excludePredictionId });
+    }
+
+    const existingBoosted = await query.getOne();
+
+    if (existingBoosted) {
+      existingBoosted.isBoosted = false;
+      await this.predictionRepository.save(existingBoosted);
+    }
+  }
+
   private async incrementTotalPredictionsCount(userId: string): Promise<void> {
     let stats = await this.statsRepository.findOne({
       where: { userId },
@@ -234,10 +266,11 @@ export class PredictionService {
   //      - Helper: getMatchOutcome(score1, score2) returns 'WIN', 'DRAW', or 'LOSS' for first team
   //      - Compare predicted outcome with actual outcome
   //    - Else: pointsEarned = 0
+  //    - If prediction.isBoosted is true, multiply pointsEarned by 2 (2x booster)
   // 4. Update UserPredictionStats for each user:
   //    - Add pointsEarned to totalPoints
-  //    - Increment exactMatchesCount if pointsEarned === 10
-  //    - Increment correctOutcomesCount if pointsEarned === 5
+  //    - Increment exactMatchesCount if pointsEarned === 10 (before booster multiplier)
+  //    - Increment correctOutcomesCount if pointsEarned === 5 (before booster multiplier)
   // 5. Save all updated predictions and stats
   async calculatePointsForMatch(matchId: string): Promise<void> {
     // TODO: Implement this method

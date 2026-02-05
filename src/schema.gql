@@ -58,6 +58,7 @@ input CreatePlayerDto {
 }
 
 input CreatePredictionDto {
+  isBoosted: Boolean = false
   matchId: String!
   predictedScore1: Int!
   predictedScore2: Int!
@@ -99,6 +100,7 @@ type Match {
   firstOpponent: Team!
   id: ID!
   location: MatchLocation
+  mvp: Player
   round: Int!
   score1: Int
   score2: Int
@@ -225,6 +227,7 @@ enum PlayerPosition {
 type Prediction {
   createdAt: Date!
   id: ID!
+  isBoosted: Boolean!
   match: Match!
   pointsEarned: Int
   predictedScore1: Int!
@@ -331,6 +334,7 @@ input UpdateMatchDto {
   date: Date
   firstOpponentId: String
   location: MatchLocation
+  mvpId: String
   round: Int
   score1: Int
   score2: Int
@@ -365,6 +369,7 @@ input UpdatePlayerDto {
 }
 
 input UpdatePredictionDto {
+  isBoosted: Boolean
   predictedScore1: Int
   predictedScore2: Int
 }
