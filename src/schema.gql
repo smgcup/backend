@@ -99,6 +99,7 @@ type Match {
   firstOpponent: Team!
   id: ID!
   location: MatchLocation
+  mvp: Player
   round: Int!
   score1: Int
   score2: Int
@@ -339,6 +340,7 @@ input UpdateMatchDto {
   date: Date
   firstOpponentId: String
   location: MatchLocation
+  mvpId: String
   round: Int
   score1: Int
   score2: Int

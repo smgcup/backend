@@ -52,4 +52,9 @@ export class UpdateMatchDto {
   @IsOptional()
   @IsEnum(MatchLocation)
   location?: MatchLocation | null;
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID('all')
+  mvpId?: string | null;
 }
