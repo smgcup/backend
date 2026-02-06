@@ -43,17 +43,7 @@ export class PlayerResolver {
 
   @ResolveField(() => Stats, { name: 'stats' })
   async stats(@Parent() player: Player) {
-    return {
-      goals: await this.playerStatsService.getGoals(player.id),
-      penaltiesScored: await this.playerStatsService.getPenaltiesScored(player.id),
-      penaltiesMissed: await this.playerStatsService.getPenaltiesMissed(player.id),
-      assists: await this.playerStatsService.getAssists(player.id),
-      yellowCards: await this.playerStatsService.getYellowCards(player.id),
-      redCards: await this.playerStatsService.getRedCards(player.id),
-      goalkeeperSaves: await this.playerStatsService.getGoalkeeperSaves(player.id),
-      ownGoals: await this.playerStatsService.getOwnGoals(player.id),
-      cleanSheets: await this.playerStatsService.getCleanSheets(player),
-    };
+    return await this.playerStatsService.getAllStatsForPlayer(player);
   }
 
   /**

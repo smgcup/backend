@@ -40,5 +40,4 @@ export class CreateMatchDto {
   @IsOptional()
   @IsEnum(MatchLocation)
   location?: MatchLocation | null;
-
 }
