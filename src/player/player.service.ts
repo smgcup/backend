@@ -116,7 +116,7 @@ export class PlayerService {
         fileBase64: image.fileBase64,
         fileName: `${player.id}.${extension}`,
         mimeType,
-        bucket: 'player-images',
+        bucket: 'bucket',
       });
 
       player.imageUrl = uploadedImage.signedUrl;
