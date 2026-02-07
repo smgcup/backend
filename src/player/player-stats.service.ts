@@ -21,7 +21,7 @@ export interface PlayerStats {
   redCards: number;
   goalkeeperSaves: number;
   ownGoals: number;
-  cleanSheets: number | null;
+  cleanSheets: number;
 }
 
 @Injectable()
@@ -263,7 +263,7 @@ export class PlayerStatsService {
    */
   async getCleanSheets(player: Player) {
     if (player.position !== PlayerPosition.GOALKEEPER && player.position !== PlayerPosition.DEFENDER) {
-      return null;
+      return 0;
     }
     const matchIds = await this.playerAppearanceRepository
       .find({

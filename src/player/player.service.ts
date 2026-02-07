@@ -174,7 +174,7 @@ export class PlayerService {
             assists,
             yellowCards,
             redCards,
-            cleanSheets: cleanSheets ?? 0,
+            cleanSheets,
           } as Stats,
         };
       }),
@@ -187,7 +187,7 @@ export class PlayerService {
         playersWithStats.sort((a, b) => b.stats.assists - a.stats.assists);
         break;
       case LeaderboardSortType.CLEAN_SHEETS:
-        playersWithStats.sort((a, b) => (b.stats.cleanSheets ?? 0) - (a.stats.cleanSheets ?? 0));
+        playersWithStats.sort((a, b) => b.stats.cleanSheets - a.stats.cleanSheets);
         break;
       case LeaderboardSortType.RED_CARDS:
         playersWithStats.sort((a, b) => b.stats.redCards - a.stats.redCards);
