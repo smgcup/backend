@@ -12,3 +12,4 @@ export * from './match-event.translation-codes';
 export * from './image.translation-codes';
 export * from './prediction.translation-codes';
 export * from './player-appearance.translation-codes';
+export * from './fantasy-player.translation-codes';

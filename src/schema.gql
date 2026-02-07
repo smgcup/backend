@@ -19,6 +19,12 @@ input CreateAllPlayerAppearancesDto {
   matchId: String!
 }
 
+input CreateFantasyPlayerDto {
+  displayName: String!
+  playerId: String!
+  price: Float!
+}
+
 input CreateMatchDto {
   date: Date
   firstOpponentId: String!
@@ -73,6 +79,13 @@ scalar Date
 
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
+
+type FantasyPlayer {
+  displayName: String!
+  player: Player!
+  playerId: ID!
+  price: Float!
+}
 
 input ImageUploadInput {
   fileBase64: String!
@@ -147,12 +160,14 @@ type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   adminLogout: AdminLoginResult!
   createAllPlayerAppearances(input: CreateAllPlayerAppearancesDto!): [PlayerAppearance!]!
+  createFantasyPlayer(createFantasyPlayerDto: CreateFantasyPlayerDto!): FantasyPlayer!
   createMatch(createMatchDto: CreateMatchDto!): Match!
   createMatchEvent(createMatchEventDto: CreateMatchEventDto!): MatchEvent!
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createPrediction(input: CreatePredictionDto!): Prediction!
   createTeam(createTeamDto: CreateTeamDto!): Team!
+  deleteFantasyPlayer(playerId: String!): FantasyPlayer!
   deleteMatch(id: String!): Match!
   deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
@@ -163,6 +178,7 @@ type Mutation {
   login(loginInput: LoginInput!): AuthResponse!
   register(registerInput: RegisterUserInput!): AuthResponse!
   startMatch(id: String!): Match!
+  updateFantasyPlayer(playerId: String!, updateFantasyPlayerDto: UpdateFantasyPlayerDto!): FantasyPlayer!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): Boolean!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
@@ -243,6 +259,8 @@ enum PreferredFoot {
 }
 
 type Query {
+  fantasyPlayerByPlayerId(playerId: String!): FantasyPlayer!
+  fantasyPlayers: [FantasyPlayer!]!
   health: String!
   matchById(id: String!): Match!
   matchEvents(matchId: String!): [MatchEvent!]!
@@ -328,6 +346,11 @@ type TeamStats {
   redCards: Float!
   wins: Float!
   yellowCards: Float!
+}
+
+input UpdateFantasyPlayerDto {
+  displayName: String
+  price: Float
 }
 
 input UpdateMatchDto {
