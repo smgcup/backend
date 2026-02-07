@@ -3,6 +3,8 @@ import { PlayerAppearance } from './entities/player-appearance.entity';
 import { PlayerAppearanceService } from './player-appearance.service';
 import { UpdatePlayerAppearanceDto } from './dto/update-player-appearance.dto';
 import { CreateAllPlayerAppearancesDto } from './dto/create-all-player-appearances.dto';
+import { AdminAuthGuard } from '../admin/auth/guards/admin-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => PlayerAppearance)
 export class PlayerAppearanceResolver {
@@ -18,6 +20,7 @@ export class PlayerAppearanceResolver {
     return await this.playerAppearanceService.getAppearancesByPlayerId(playerId);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => [PlayerAppearance], { name: 'createAllPlayerAppearances' })
   async createAllPlayerAppearances(
     @Args('input', { type: () => CreateAllPlayerAppearancesDto }) input: CreateAllPlayerAppearancesDto,
@@ -25,6 +28,7 @@ export class PlayerAppearanceResolver {
     return await this.playerAppearanceService.createAllAppearances(input);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => PlayerAppearance, { name: 'updatePlayerAppearance' })
   async updatePlayerAppearance(
     @Args('input', { type: () => UpdatePlayerAppearanceDto }) input: UpdatePlayerAppearanceDto,
@@ -32,6 +36,7 @@ export class PlayerAppearanceResolver {
     return await this.playerAppearanceService.updateAppearance(input);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Boolean, { name: 'deletePlayerAppearance' })
   async deletePlayerAppearance(
     @Args('matchId', { type: () => String }) matchId: string,

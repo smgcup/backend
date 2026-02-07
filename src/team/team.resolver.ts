@@ -7,6 +7,8 @@ import { PlayerService } from '../player/player.service';
 import { UpdateTeamDto } from './dto/update-team.dto';
 import { TeamStatsService } from './team.stats.service';
 import { TeamStats } from './entities/team-stats.entity';
+import { AdminAuthGuard } from '../admin/auth/guards/admin-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => Team)
 export class TeamResolver {
@@ -47,11 +49,13 @@ export class TeamResolver {
    * @param createTeamDto - The data for the new team
    * @returns The newly created team
    */
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Team, { name: 'createTeam' })
   async createTeam(@Args('createTeamDto', { type: () => CreateTeamDto }) createTeamDto: CreateTeamDto): Promise<Team> {
     return await this.teamService.createTeam(createTeamDto);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Team, { name: 'updateTeam' })
   async updateTeam(
     @Args('id', { type: () => String }) id: string,
@@ -59,7 +63,7 @@ export class TeamResolver {
   ): Promise<Team> {
     return await this.teamService.updateTeam(id, updateTeamDto);
   }
-
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Team, { name: 'deleteTeam' })
   async deleteTeam(@Args('id', { type: () => String }) id: string): Promise<Team> {
     return await this.teamService.deleteTeam(id);

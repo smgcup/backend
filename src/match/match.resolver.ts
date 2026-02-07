@@ -1,8 +1,10 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { MatchService } from './match.service';
 import { Match } from './entities/match.entity';
 import { CreateMatchDto } from './dto/create-match.dto';
 import { UpdateMatchDto } from './dto/update-match.dto';
+import { AdminAuthGuard } from '../admin/auth/guards/admin-auth.guard';
 
 @Resolver(() => Match)
 export class MatchResolver {
@@ -18,6 +20,7 @@ export class MatchResolver {
     return await this.matchService.getMatchById(id);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'createMatch' })
   async createMatch(
     @Args('createMatchDto', { type: () => CreateMatchDto }) createMatchDto: CreateMatchDto,
@@ -25,6 +28,7 @@ export class MatchResolver {
     return await this.matchService.createMatch(createMatchDto);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'updateMatch' })
   async updateMatch(
     @Args('id', { type: () => String }) id: string,
@@ -33,11 +37,13 @@ export class MatchResolver {
     return await this.matchService.updateMatch(id, updateMatchDto);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'deleteMatch' })
   async deleteMatch(@Args('id', { type: () => String }) id: string): Promise<Match> {
     return await this.matchService.deleteMatch(id);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'startMatch' })
   async startMatch(@Args('id', { type: () => String }) id: string): Promise<Match> {
     return await this.matchService.startMatch(id);
