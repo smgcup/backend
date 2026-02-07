@@ -102,7 +102,7 @@ export class PlayerService {
   async updatePlayer(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     const player = await this.getPlayerById(id);
 
-    const { teamId, image, ...patch } = updatePlayerDto;
+    const { teamId, image, celebrationImage, ...patch } = updatePlayerDto;
     Object.assign(player, patch);
 
     if (image) {
@@ -120,6 +120,23 @@ export class PlayerService {
       });
 
       player.imageUrl = uploadedImage.signedUrl;
+    }
+
+    if (celebrationImage) {
+      const { mimeType } = celebrationImage;
+      const extension = mimeType?.split('/')[1];
+      if (!mimeType || !extension) {
+        throw new BadRequestError(IMAGE_TRANSLATION_CODES.invalidFileType);
+      }
+
+      const uploadedImage = await this.imageService.uploadFile({
+        fileBase64: celebrationImage.fileBase64,
+        fileName: `${player.id}-celebration.${extension}`,
+        mimeType,
+        bucket: 'bucket',
+      });
+
+      player.celebrationImageUrl = uploadedImage.signedUrl;
     }
 
     if (teamId) {

@@ -44,6 +44,10 @@ export class Player {
   @Column({ name: 'image_url', type: 'text', nullable: true })
   imageUrl: string;
 
+  @Field(() => String, { nullable: true })
+  @Column({ name: 'celebration_image_url', type: 'text', nullable: true })
+  celebrationImageUrl?: string;
+
   @Field(() => Team, { nullable: false })
   @ManyToOne(() => Team, (team) => team.id, { nullable: false })
   @JoinColumn({ name: 'team_id' })

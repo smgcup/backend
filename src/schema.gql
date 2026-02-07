@@ -51,6 +51,7 @@ input CreateNewsDto {
 }
 
 input CreatePlayerDto {
+  celebrationImageUrl: String
   class: String
   dateOfBirth: Date!
   firstName: String!
@@ -205,6 +206,7 @@ type PaginatedPlayersResponse {
 
 type Player {
   age: Float!
+  celebrationImageUrl: String
   class: String
   dateOfBirth: Date!
   firstName: String!
@@ -379,6 +381,7 @@ input UpdatePlayerAppearanceDto {
 }
 
 input UpdatePlayerDto {
+  celebrationImage: ImageUploadInput
   class: String
   dateOfBirth: Date
   firstName: String
