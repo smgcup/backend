@@ -1,6 +1,7 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { UnauthorizedException } from '@nestjs/common';
 import { AdminLoginResult } from './entities/admin-login-result.entity';
+import { UnauthorizedError } from '../../exception/exceptions';
+import { ADMIN_TRANSLATION_CODES } from '../../exception/translation-codes';
 
 @Resolver()
 export class AdminAuthResolver {
@@ -12,7 +13,7 @@ export class AdminAuthResolver {
     if (!expectedPasskey || !token) throw new Error('Server misconfigured');
 
     if (passkey !== expectedPasskey) {
-      throw new UnauthorizedException('Invalid passkey');
+      throw new UnauthorizedError(ADMIN_TRANSLATION_CODES.adminTokenInvalid, 'Invalid passkey');
     }
 
     return { ok: true, token: token ?? '' };
