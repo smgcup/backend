@@ -319,13 +319,13 @@ export class PlayerService {
         ownGoals: ownGoals.get(player.id) ?? 0,
       }))
       .sort((a, b) => {
-        const goalsA = a.goals;
-        const goalsB = b.goals;
-        if (goalsB !== goalsA) return goalsB - goalsA;
-        if (b.assists !== a.assists) return b.assists - a.assists;
-        if (a.redCards !== b.redCards) return a.redCards - b.redCards;
-        if (a.yellowCards !== b.yellowCards) return a.yellowCards - b.yellowCards;
-        return a.ownGoals - b.ownGoals;
+        const goalsPlusAssistsA = a.goals + a.assists;
+        const goalsPlusAssistsB = b.goals + b.assists;
+        if (goalsPlusAssistsB !== goalsPlusAssistsA) return goalsPlusAssistsB - goalsPlusAssistsA;
+        if (b.goals !== a.goals) return b.goals - a.goals;
+        const nameA = `${a.player.lastName} ${a.player.firstName}`.toLowerCase();
+        const nameB = `${b.player.lastName} ${b.player.firstName}`.toLowerCase();
+        return nameA.localeCompare(nameB);
       })
       .slice(0, 5);
 
