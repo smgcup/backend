@@ -99,6 +99,7 @@ export class PlayerStatsService {
             redCards++;
             break;
           case MatchEventType.GOALKEEPER_SAVE:
+          case MatchEventType.PENALTY_SAVE:
             goalkeeperSaves++;
             break;
           case MatchEventType.OWN_GOAL:
@@ -236,10 +237,16 @@ export class PlayerStatsService {
   async getGoalkeeperSaves(playerId: Player['id']) {
     const matchEvents = await this.getMatchEvents();
     if (matchEvents) {
-      return matchEvents.filter((event) => event.playerId === playerId && event.type === MatchEventType.GOALKEEPER_SAVE)
-        .length;
+      return matchEvents.filter(
+        (event) =>
+          event.playerId === playerId &&
+          (event.type === MatchEventType.GOALKEEPER_SAVE || event.type === MatchEventType.PENALTY_SAVE),
+      ).length;
     }
-    return await this.getMatchEventsCountByPlayerId(playerId, [MatchEventType.GOALKEEPER_SAVE]);
+    return await this.getMatchEventsCountByPlayerId(playerId, [
+      MatchEventType.GOALKEEPER_SAVE,
+      MatchEventType.PENALTY_SAVE,
+    ]);
   }
 
   /**

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MatchEvent } from '../match-event/entities/match-event.entity';
 import { MatchEventType } from '../match-event/enums/match-event-type.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, MoreThan, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Player } from '../player/entities/player.entity';
 import { Match } from '../match/entities/match.entity';
 import { Team } from './entities/team.entity';
@@ -56,7 +56,10 @@ export class TeamStatsService {
   }
 
   async getGoalkeeperSaves(playerIds: Player['id'][]) {
-    return await this.getMatchEventsCountByPlayerIds(playerIds, [MatchEventType.GOALKEEPER_SAVE]);
+    return await this.getMatchEventsCountByPlayerIds(playerIds, [
+      MatchEventType.GOALKEEPER_SAVE,
+      MatchEventType.PENALTY_SAVE,
+    ]);
   }
 
   async getOwnGoals(playerIds: Player['id'][]) {
