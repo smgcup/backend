@@ -53,7 +53,7 @@ export class PlayerResolver {
    * @param createPlayerDto - The data for the new player
    * @returns The newly created player
    */
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Player, { name: 'createPlayer' })
   async createPlayer(
     @Args('createPlayerDto', { type: () => CreatePlayerDto }) createPlayerDto: CreatePlayerDto,
@@ -61,7 +61,7 @@ export class PlayerResolver {
     return await this.playerService.createPlayer(createPlayerDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Player, { name: 'updatePlayer' })
   async updatePlayer(
     @Args('id', { type: () => String }) id: string,
@@ -70,7 +70,7 @@ export class PlayerResolver {
     return await this.playerService.updatePlayer(id, updatePlayerDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Player, { name: 'deletePlayer' })
   async deletePlayer(@Args('id', { type: () => String }) id: string): Promise<Player> {
     return await this.playerService.deletePlayer(id);

@@ -20,7 +20,7 @@ export class MatchResolver {
     return await this.matchService.getMatchById(id);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'createMatch' })
   async createMatch(
     @Args('createMatchDto', { type: () => CreateMatchDto }) createMatchDto: CreateMatchDto,
@@ -28,7 +28,7 @@ export class MatchResolver {
     return await this.matchService.createMatch(createMatchDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'updateMatch' })
   async updateMatch(
     @Args('id', { type: () => String }) id: string,
@@ -37,13 +37,13 @@ export class MatchResolver {
     return await this.matchService.updateMatch(id, updateMatchDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'deleteMatch' })
   async deleteMatch(@Args('id', { type: () => String }) id: string): Promise<Match> {
     return await this.matchService.deleteMatch(id);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Match, { name: 'startMatch' })
   async startMatch(@Args('id', { type: () => String }) id: string): Promise<Match> {
     return await this.matchService.startMatch(id);
