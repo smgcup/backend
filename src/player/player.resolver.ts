@@ -7,6 +7,8 @@ import { PlayerStatsService } from './player-stats.service';
 import { Stats } from '../statistics/entities/stats.entity';
 import { LeaderboardSortType } from './enums/leaderboard-sort-type.enum';
 import { PaginatedPlayersResponse } from './dto/paginated-players-response.dto';
+import { AdminAuthGuard } from '../admin/auth/guards/admin-auth.guard';
+import { UseGuards } from '@nestjs/common';
 
 @Resolver(() => Player)
 export class PlayerResolver {
@@ -51,6 +53,7 @@ export class PlayerResolver {
    * @param createPlayerDto - The data for the new player
    * @returns The newly created player
    */
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Player, { name: 'createPlayer' })
   async createPlayer(
     @Args('createPlayerDto', { type: () => CreatePlayerDto }) createPlayerDto: CreatePlayerDto,
@@ -58,6 +61,7 @@ export class PlayerResolver {
     return await this.playerService.createPlayer(createPlayerDto);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Player, { name: 'updatePlayer' })
   async updatePlayer(
     @Args('id', { type: () => String }) id: string,
@@ -66,6 +70,7 @@ export class PlayerResolver {
     return await this.playerService.updatePlayer(id, updatePlayerDto);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Mutation(() => Player, { name: 'deletePlayer' })
   async deletePlayer(@Args('id', { type: () => String }) id: string): Promise<Player> {
     return await this.playerService.deletePlayer(id);

@@ -4,6 +4,7 @@
 
 type AdminLoginResult {
   ok: Boolean!
+  token: String!
 }
 
 type AuthResponse {
@@ -160,7 +161,6 @@ enum MatchStatus {
 
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
-  adminLogout: AdminLoginResult!
   createAllPlayerAppearances(input: CreateAllPlayerAppearancesDto!): [PlayerAppearance!]!
   createFantasyPlayer(createFantasyPlayerDto: CreateFantasyPlayerDto!): FantasyPlayer!
   createMatch(createMatchDto: CreateMatchDto!): Match!
