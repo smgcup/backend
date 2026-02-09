@@ -15,7 +15,7 @@ export class NewsResolver {
     return await this.newsService.getNews();
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => News, { name: 'createNews' })
   async createNews(@Args('createNewsDto', { type: () => CreateNewsDto }) createNewsDto: CreateNewsDto): Promise<News> {
     return await this.newsService.createNews(createNewsDto);
@@ -26,7 +26,7 @@ export class NewsResolver {
     return await this.newsService.getNewsById(id);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => Boolean, { name: 'updateNews' })
   async updateNews(
     @Args('id', { type: () => String }) id: string,
@@ -35,7 +35,7 @@ export class NewsResolver {
     return await this.newsService.updateNews(id, updateNewsDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => News, { name: 'deleteNews' })
   async deleteNews(@Args('id', { type: () => String }) id: string): Promise<News> {
     return await this.newsService.deleteNews(id);
