@@ -9,9 +9,9 @@ export class FantasyPlayer {
   @PrimaryColumn({ name: 'player_id', type: 'uuid' })
   playerId: string;
 
-  @Field(() => String)
-  @Column({ name: 'display_name', type: 'text', nullable: false })
-  displayName: string;
+  @Field(() => String, { nullable: true })
+  @Column({ name: 'display_name', type: 'text', nullable: true })
+  displayName: string | null;
 
   @Field(() => Float)
   @Column({ name: 'price', type: 'numeric', nullable: false })

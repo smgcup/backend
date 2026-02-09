@@ -36,7 +36,7 @@ export class FantasyPlayerService {
 
     const fantasyPlayer = this.fantasyPlayerRepository.create({
       playerId: createFantasyPlayerDto.playerId,
-      displayName: createFantasyPlayerDto.displayName,
+      displayName: createFantasyPlayerDto.displayName ?? null,
       price: createFantasyPlayerDto.price,
     });
 

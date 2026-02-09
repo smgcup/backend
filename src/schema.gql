@@ -20,7 +20,7 @@ input CreateAllPlayerAppearancesDto {
 }
 
 input CreateFantasyPlayerDto {
-  displayName: String!
+  displayName: String
   playerId: String!
   price: Float!
 }
@@ -82,7 +82,7 @@ scalar Date
 scalar DateSimple
 
 type FantasyPlayer {
-  displayName: String!
+  displayName: String
   player: Player!
   playerId: ID!
   price: Float!

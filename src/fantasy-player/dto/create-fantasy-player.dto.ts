@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsNumber, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
 
 @InputType()
 export class CreateFantasyPlayerDto {
@@ -8,12 +8,12 @@ export class CreateFantasyPlayerDto {
   @IsUUID()
   playerId: string;
 
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
+  @IsOptional()
   @MinLength(1)
   @MaxLength(255)
   @IsString()
-  displayName: string;
+  displayName?: string;
 
   @Field()
   @IsNotEmpty()
