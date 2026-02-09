@@ -35,7 +35,7 @@ export class NewsService {
       fileBase64: createNewsDto.image.fileBase64,
       fileName: `${newsId}.${extension}`,
       mimeType,
-      bucket: 'news-images',
+      bucket: 'bucket',
     });
 
     const news = this.newsRepository.create({
@@ -68,7 +68,7 @@ export class NewsService {
         fileBase64: updateNewsDto.image.fileBase64,
         fileName: `${news.id}.${extension}`,
         mimeType,
-        bucket: 'news-images',
+        bucket: 'bucket',
       });
       news.imageUrl = uploadedImage.signedUrl;
     }
