@@ -10,10 +10,12 @@ import { generateUuidv7 } from '../shared/utils';
 @Injectable()
 export class ImageService {
   private readonly supabase: SupabaseClient;
+  private readonly supabaseUrl: string;
   private readonly signedUrlExpiresIn: number = 60 * 60 * 24 * 400; // 400 days in seconds
 
   constructor(private readonly configService: ConfigService) {
     const supabaseUrl = this.configService.get<string>('SUPABASE_URL') || '';
+    this.supabaseUrl = supabaseUrl.replace(/\/$/, '');
     const supabaseServiceRoleKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY') || '';
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -44,12 +46,16 @@ export class ImageService {
       throw new InternalServerError(IMAGE_TRANSLATION_CODES.uploadFailed, error.message);
     }
 
-    const signedUrl = await this.createSignedUrl(bucket, data.path);
+    const publicUrl = this.getPublicUrl(bucket, data.path);
 
     return {
       path: data.path,
-      signedUrl,
+      signedUrl: publicUrl,
     };
+  }
+
+  getPublicUrl(bucket: string, path: string): string {
+    return `${this.supabaseUrl}/storage/v1/object/public/${bucket}/${path}`;
   }
 
   async createSignedUrl(bucket: string, path: string): Promise<string> {

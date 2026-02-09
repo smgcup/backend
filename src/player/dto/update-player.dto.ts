@@ -57,6 +57,12 @@ export class UpdatePlayerDto {
   @Type(() => ImageUploadInput)
   image?: ImageUploadInput;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ImageUploadInput)
+  celebrationImage?: ImageUploadInput;
+
   @Field(() => PreferredFoot, { nullable: true })
   @IsOptional()
   @IsEnum(PreferredFoot)

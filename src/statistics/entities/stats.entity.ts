@@ -27,5 +27,5 @@ export class Stats {
   ownGoals: number;
 
   @Field(() => Number)
-  cleanSheets: number | null;
+  cleanSheets: number;
 }

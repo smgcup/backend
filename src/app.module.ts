@@ -19,6 +19,7 @@ import { ImageModule } from './image/image.module';
 import { PredictionModule } from './prediction/prediction.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { PlayerAppearanceModule } from './player-appearance/player-appearance.module';
+import { FantasyPlayerModule } from './fantasy-player/fantasy-player.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { PlayerAppearanceModule } from './player-appearance/player-appearance.mo
     PredictionModule,
     StatisticsModule,
     PlayerAppearanceModule,
+    FantasyPlayerModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],

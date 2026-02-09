@@ -44,6 +44,11 @@ export class CreatePlayerDto {
   @IsString()
   imageUrl?: string;
 
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  celebrationImageUrl?: string;
+
   @Field()
   @IsNotEmpty()
   @IsNumber()

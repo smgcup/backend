@@ -9,6 +9,7 @@ export enum MatchEventType {
   // SUBSTITUTION = 'SUBSTITUTION', // Substitution
   PENALTY_SCORED = 'PENALTY_SCORED', // Penalty scored
   PENALTY_MISSED = 'PENALTY_MISSED', // Penalty missed
+  PENALTY_SAVE = 'PENALTY_SAVE', // Penalty save
   HALF_TIME = 'HALF_TIME', // Half time
   FULL_TIME = 'FULL_TIME', // Full time
 }

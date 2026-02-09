@@ -20,6 +20,12 @@ input CreateAllPlayerAppearancesDto {
   matchId: String!
 }
 
+input CreateFantasyPlayerDto {
+  displayName: String
+  playerId: String!
+  price: Float!
+}
+
 input CreateMatchDto {
   date: Date
   firstOpponentId: String!
@@ -46,6 +52,7 @@ input CreateNewsDto {
 }
 
 input CreatePlayerDto {
+  celebrationImageUrl: String
   class: String
   dateOfBirth: Date!
   firstName: String!
@@ -74,6 +81,13 @@ scalar Date
 
 """Date simple scalar type (YYYY-MM-DD format)"""
 scalar DateSimple
+
+type FantasyPlayer {
+  displayName: String
+  player: Player!
+  playerId: ID!
+  price: Float!
+}
 
 input ImageUploadInput {
   fileBase64: String!
@@ -127,6 +141,7 @@ enum MatchEventType {
   HALF_TIME
   OWN_GOAL
   PENALTY_MISSED
+  PENALTY_SAVE
   PENALTY_SCORED
   RED_CARD
   YELLOW_CARD
@@ -147,12 +162,14 @@ enum MatchStatus {
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
   createAllPlayerAppearances(input: CreateAllPlayerAppearancesDto!): [PlayerAppearance!]!
+  createFantasyPlayer(createFantasyPlayerDto: CreateFantasyPlayerDto!): FantasyPlayer!
   createMatch(createMatchDto: CreateMatchDto!): Match!
   createMatchEvent(createMatchEventDto: CreateMatchEventDto!): MatchEvent!
   createNews(createNewsDto: CreateNewsDto!): News!
   createPlayer(createPlayerDto: CreatePlayerDto!): Player!
   createPrediction(input: CreatePredictionDto!): Prediction!
   createTeam(createTeamDto: CreateTeamDto!): Team!
+  deleteFantasyPlayer(playerId: String!): FantasyPlayer!
   deleteMatch(id: String!): Match!
   deleteMatchEvent(id: String!): MatchEvent!
   deleteNews(id: String!): News!
@@ -163,6 +180,7 @@ type Mutation {
   login(loginInput: LoginInput!): AuthResponse!
   register(registerInput: RegisterUserInput!): AuthResponse!
   startMatch(id: String!): Match!
+  updateFantasyPlayer(playerId: String!, updateFantasyPlayerDto: UpdateFantasyPlayerDto!): FantasyPlayer!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
   updateNews(id: String!, updateNewsDto: UpdateNewsDto!): Boolean!
   updatePlayer(id: String!, updatePlayerDto: UpdatePlayerDto!): Player!
@@ -189,6 +207,7 @@ type PaginatedPlayersResponse {
 
 type Player {
   age: Float!
+  celebrationImageUrl: String
   class: String
   dateOfBirth: Date!
   firstName: String!
@@ -243,6 +262,8 @@ enum PreferredFoot {
 }
 
 type Query {
+  fantasyPlayerByPlayerId(playerId: String!): FantasyPlayer!
+  fantasyPlayers: [FantasyPlayer!]!
   health: String!
   matchById(id: String!): Match!
   matchEvents(matchId: String!): [MatchEvent!]!
@@ -330,6 +351,11 @@ type TeamStats {
   yellowCards: Float!
 }
 
+input UpdateFantasyPlayerDto {
+  displayName: String
+  price: Float
+}
+
 input UpdateMatchDto {
   date: Date
   firstOpponentId: String
@@ -356,6 +382,7 @@ input UpdatePlayerAppearanceDto {
 }
 
 input UpdatePlayerDto {
+  celebrationImage: ImageUploadInput
   class: String
   dateOfBirth: Date
   firstName: String

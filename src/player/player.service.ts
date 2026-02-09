@@ -102,7 +102,7 @@ export class PlayerService {
   async updatePlayer(id: string, updatePlayerDto: UpdatePlayerDto): Promise<Player> {
     const player = await this.getPlayerById(id);
 
-    const { teamId, image, ...patch } = updatePlayerDto;
+    const { teamId, image, celebrationImage, ...patch } = updatePlayerDto;
     Object.assign(player, patch);
 
     if (image) {
@@ -116,10 +116,27 @@ export class PlayerService {
         fileBase64: image.fileBase64,
         fileName: `${player.id}.${extension}`,
         mimeType,
-        bucket: 'player-images',
+        bucket: 'bucket',
       });
 
       player.imageUrl = uploadedImage.signedUrl;
+    }
+
+    if (celebrationImage) {
+      const { mimeType } = celebrationImage;
+      const extension = mimeType?.split('/')[1];
+      if (!mimeType || !extension) {
+        throw new BadRequestError(IMAGE_TRANSLATION_CODES.invalidFileType);
+      }
+
+      const uploadedImage = await this.imageService.uploadFile({
+        fileBase64: celebrationImage.fileBase64,
+        fileName: `${player.id}-celebration.${extension}`,
+        mimeType,
+        bucket: 'bucket',
+      });
+
+      player.celebrationImageUrl = uploadedImage.signedUrl;
     }
 
     if (teamId) {
@@ -174,7 +191,7 @@ export class PlayerService {
             assists,
             yellowCards,
             redCards,
-            cleanSheets: cleanSheets ?? 0,
+            cleanSheets,
           } as Stats,
         };
       }),
@@ -187,7 +204,7 @@ export class PlayerService {
         playersWithStats.sort((a, b) => b.stats.assists - a.stats.assists);
         break;
       case LeaderboardSortType.CLEAN_SHEETS:
-        playersWithStats.sort((a, b) => (b.stats.cleanSheets ?? 0) - (a.stats.cleanSheets ?? 0));
+        playersWithStats.sort((a, b) => b.stats.cleanSheets - a.stats.cleanSheets);
         break;
       case LeaderboardSortType.RED_CARDS:
         playersWithStats.sort((a, b) => b.stats.redCards - a.stats.redCards);
@@ -319,13 +336,13 @@ export class PlayerService {
         ownGoals: ownGoals.get(player.id) ?? 0,
       }))
       .sort((a, b) => {
-        const goalsA = a.goals;
-        const goalsB = b.goals;
-        if (goalsB !== goalsA) return goalsB - goalsA;
-        if (b.assists !== a.assists) return b.assists - a.assists;
-        if (a.redCards !== b.redCards) return a.redCards - b.redCards;
-        if (a.yellowCards !== b.yellowCards) return a.yellowCards - b.yellowCards;
-        return a.ownGoals - b.ownGoals;
+        const goalsPlusAssistsA = a.goals + a.assists;
+        const goalsPlusAssistsB = b.goals + b.assists;
+        if (goalsPlusAssistsB !== goalsPlusAssistsA) return goalsPlusAssistsB - goalsPlusAssistsA;
+        if (b.goals !== a.goals) return b.goals - a.goals;
+        const nameA = `${a.player.lastName} ${a.player.firstName}`.toLowerCase();
+        const nameB = `${b.player.lastName} ${b.player.firstName}`.toLowerCase();
+        return nameA.localeCompare(nameB);
       })
       .slice(0, 5);
 
