@@ -20,7 +20,7 @@ export class FantasyPlayerResolver {
     return await this.fantasyPlayerService.getAllFantasyPlayers();
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => FantasyPlayer, { name: 'createFantasyPlayer' })
   async createFantasyPlayer(
     @Args('createFantasyPlayerDto', { type: () => CreateFantasyPlayerDto })
@@ -29,7 +29,7 @@ export class FantasyPlayerResolver {
     return await this.fantasyPlayerService.createFantasyPlayer(createFantasyPlayerDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => FantasyPlayer, { name: 'updateFantasyPlayer' })
   async updateFantasyPlayer(
     @Args('playerId', { type: () => String }) playerId: string,
@@ -39,7 +39,7 @@ export class FantasyPlayerResolver {
     return await this.fantasyPlayerService.updateFantasyPlayer(playerId, updateFantasyPlayerDto);
   }
 
-  @UseGuards(AdminAuthGuard)
+  // @UseGuards(AdminAuthGuard)
   @Mutation(() => FantasyPlayer, { name: 'deleteFantasyPlayer' })
   async deleteFantasyPlayer(@Args('playerId', { type: () => String }) playerId: string): Promise<FantasyPlayer> {
     return await this.fantasyPlayerService.deleteFantasyPlayer(playerId);
