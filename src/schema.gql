@@ -28,6 +28,8 @@ input CreateFantasyPlayerDto {
 
 input CreateMatchDto {
   date: Date
+  fdr1: Int
+  fdr2: Int
   firstOpponentId: String!
   location: MatchLocation
   round: Int!
@@ -112,6 +114,8 @@ input LoginInput {
 
 type Match {
   date: Date
+  fdr1: Int
+  fdr2: Int
   firstOpponent: Team!
   id: ID!
   location: MatchLocation
@@ -358,6 +362,8 @@ input UpdateFantasyPlayerDto {
 
 input UpdateMatchDto {
   date: Date
+  fdr1: Int
+  fdr2: Int
   firstOpponentId: String
   location: MatchLocation
   mvpId: String

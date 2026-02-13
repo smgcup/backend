@@ -5,6 +5,8 @@ export const MATCH_TRANSLATION_CODES = {
   // Validation
   matchRoundTooLow: 'matchRoundTooLow',
   matchRoundTooHigh: 'matchRoundTooHigh',
+  matchFdrTooLow: 'matchFdrTooLow',
+  matchFdrTooHigh: 'matchFdrTooHigh',
   invalidMatchDate: 'invalidMatchDate',
   opponentTeamNotFound: 'opponentTeamNotFound',
   opponentTeamsMustBeDifferent: 'opponentTeamsMustBeDifferent',

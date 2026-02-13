@@ -57,6 +57,8 @@ export class MatchService {
         score2: null,
         round: createMatchDto.round,
         location: createMatchDto.location ?? null,
+        fdr1: createMatchDto.fdr1 ?? null,
+        fdr2: createMatchDto.fdr2 ?? null,
         mvp: null,
       });
 
@@ -116,6 +118,12 @@ export class MatchService {
       }
       if (updateMatchDto.location !== undefined) {
         match.location = updateMatchDto.location ?? null;
+      }
+      if (updateMatchDto.fdr1 !== undefined) {
+        match.fdr1 = updateMatchDto.fdr1 ?? null;
+      }
+      if (updateMatchDto.fdr2 !== undefined) {
+        match.fdr2 = updateMatchDto.fdr2 ?? null;
       }
       if (updateMatchDto.mvpId !== undefined) {
         match.mvp = updateMatchDto.mvpId ? ({ id: updateMatchDto.mvpId } as Player) : null;

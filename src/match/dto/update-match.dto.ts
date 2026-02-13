@@ -3,7 +3,7 @@ import { IsDate, IsEnum, IsInt, IsOptional, IsString, IsUUID, Max, Min } from 'c
 import { MatchLocation } from '../enums/match-location.enum';
 import { MatchStatus } from '../enums/match-status.enum';
 import { MATCH_TRANSLATION_CODES } from '../../exception/translation-codes/match.translation-codes';
-import { MATCH_ROUND_VALUES } from '../match.constants';
+import { MATCH_FDR_VALUES, MATCH_ROUND_VALUES } from '../match.constants';
 
 @InputType()
 export class UpdateMatchDto {
@@ -57,4 +57,18 @@ export class UpdateMatchDto {
   @IsOptional()
   @IsUUID('all')
   mvpId?: string | null;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(MATCH_FDR_VALUES.MIN, { message: MATCH_TRANSLATION_CODES.matchFdrTooLow })
+  @Max(MATCH_FDR_VALUES.MAX, { message: MATCH_TRANSLATION_CODES.matchFdrTooHigh })
+  fdr1?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(MATCH_FDR_VALUES.MIN, { message: MATCH_TRANSLATION_CODES.matchFdrTooLow })
+  @Max(MATCH_FDR_VALUES.MAX, { message: MATCH_TRANSLATION_CODES.matchFdrTooHigh })
+  fdr2?: number | null;
 }
