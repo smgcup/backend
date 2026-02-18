@@ -12,6 +12,7 @@ import { generateUuidv7 } from '../shared/utils';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { UpdatePredictionDto } from './dto/update-prediction.dto';
 import { MatchStatus } from '../match/enums/match-status.enum';
+import { PREDICTION_POINTS } from './prediction.constants';
 
 @Injectable()
 export class PredictionService {
@@ -294,7 +295,9 @@ export class PredictionService {
             match.score2!,
           );
 
-          prediction.pointsEarned = prediction.isBoosted ? basePoints * 2 : basePoints;
+          prediction.pointsEarned = prediction.isBoosted
+            ? basePoints * PREDICTION_POINTS.BOOSTER_MULTIPLIER
+            : basePoints;
           await manager.save(prediction);
 
           // Update user prediction stats
@@ -316,9 +319,9 @@ export class PredictionService {
           }
 
           stats.totalPoints += prediction.pointsEarned;
-          if (basePoints === 10) {
+          if (basePoints === PREDICTION_POINTS.EXACT_SCORE) {
             stats.exactMatchesCount += 1;
-          } else if (basePoints === 5) {
+          } else if (basePoints === PREDICTION_POINTS.CORRECT_OUTCOME) {
             stats.correctOutcomesCount += 1;
           }
         }
@@ -360,11 +363,11 @@ export class PredictionService {
     actualScore2: number,
   ): number {
     if (predictedScore1 === actualScore1 && predictedScore2 === actualScore2) {
-      return 10;
+      return PREDICTION_POINTS.EXACT_SCORE;
     }
     if (this.getOutcome(predictedScore1, predictedScore2) === this.getOutcome(actualScore1, actualScore2)) {
-      return 5;
+      return PREDICTION_POINTS.CORRECT_OUTCOME;
     }
-    return 0;
+    return PREDICTION_POINTS.INCORRECT;
   }
 }

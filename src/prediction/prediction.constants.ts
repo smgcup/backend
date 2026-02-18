@@ -1,0 +1,6 @@
+export const PREDICTION_POINTS = {
+  EXACT_SCORE: 10,
+  CORRECT_OUTCOME: 5,
+  INCORRECT: 0,
+  BOOSTER_MULTIPLIER: 2,
+} as const;
