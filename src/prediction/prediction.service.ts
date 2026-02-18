@@ -13,6 +13,7 @@ import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { UpdatePredictionDto } from './dto/update-prediction.dto';
 import { MatchStatus } from '../match/enums/match-status.enum';
 import { PREDICTION_POINTS } from './prediction.constants';
+import { MatchTopPredictions } from './dto/top-match-predictions.output';
 
 @Injectable()
 export class PredictionService {
@@ -369,5 +370,59 @@ export class PredictionService {
       return PREDICTION_POINTS.CORRECT_OUTCOME;
     }
     return PREDICTION_POINTS.INCORRECT;
+  }
+
+  async getTopPredictionsByRound(round: number): Promise<MatchTopPredictions[]> {
+    const scheduledMatches = await this.matchRepository.find({
+      where: { round, status: MatchStatus.SCHEDULED },
+      select: ['id'],
+    });
+
+    if (scheduledMatches.length === 0) {
+      return [];
+    }
+
+    const matchIds = scheduledMatches.map((m) => m.id);
+
+    type PredictionCountRow = {
+      matchId: string;
+      predictedScore1: string;
+      predictedScore2: string;
+      cnt: string;
+      percentage: string;
+    };
+
+    const rawResults: PredictionCountRow[] = await this.predictionRepository
+      .createQueryBuilder('p')
+      .select('p.matchId', 'matchId')
+      .addSelect('p.predictedScore1', 'predictedScore1')
+      .addSelect('p.predictedScore2', 'predictedScore2')
+      .addSelect('COUNT(*)', 'cnt')
+      .addSelect('COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (PARTITION BY p.matchId)', 'percentage')
+      .where('p.matchId IN (:...matchIds)', { matchIds })
+      .groupBy('p.matchId')
+      .addGroupBy('p.predictedScore1')
+      .addGroupBy('p.predictedScore2')
+      .orderBy('p.matchId')
+      .addOrderBy('cnt', 'DESC')
+      .getRawMany();
+
+    const matchMap = new Map<string, MatchTopPredictions>();
+    for (const id of matchIds) {
+      matchMap.set(id, { matchId: id, topPredictions: [] });
+    }
+
+    for (const row of rawResults) {
+      const entry = matchMap.get(row.matchId)!;
+      if (entry.topPredictions.length < 3) {
+        entry.topPredictions.push({
+          predictedScore1: parseInt(row.predictedScore1, 10),
+          predictedScore2: parseInt(row.predictedScore2, 10),
+          percentage: parseFloat(parseFloat(row.percentage).toFixed(1)),
+        });
+      }
+    }
+
+    return Array.from(matchMap.values());
   }
 }

@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, Int } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { PredictionService } from './prediction.service';
 import { Prediction } from './entities/prediction.entity';
@@ -10,6 +10,7 @@ import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
 import { AdminAuthGuard } from '../admin/auth/guards/admin-auth.guard';
 import { UserSession } from '../user/decorators/user-session.decorator';
 import { User } from '../user/entities/user.entity';
+import { MatchTopPredictions } from './dto/top-match-predictions.output';
 
 @Resolver(() => Prediction)
 export class PredictionResolver {
@@ -72,6 +73,11 @@ export class PredictionResolver {
     @Args('id', { type: () => String }) id: string,
   ): Promise<Prediction> {
     return await this.predictionService.deletePrediction(user.id, id);
+  }
+
+  @Query(() => [MatchTopPredictions], { name: 'topPredictionsByRound' })
+  async topPredictionsByRound(@Args('round', { type: () => Int }) round: number): Promise<MatchTopPredictions[]> {
+    return await this.predictionService.getTopPredictionsByRound(round);
   }
 
   // @UseGuards(AdminAuthGuard)
