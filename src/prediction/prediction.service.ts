@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Prediction } from './entities/prediction.entity';
 import { UserPredictionStats } from './entities/user-prediction-stats.entity';
 import { Match } from '../match/entities/match.entity';
@@ -26,6 +26,7 @@ export class PredictionService {
     private readonly matchRepository: Repository<Match>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async createPrediction(userId: string, createDto: CreatePredictionDto): Promise<Prediction> {
@@ -259,24 +260,111 @@ export class PredictionService {
     await this.statsRepository.save(stats);
   }
 
-  // TODO: Implement point calculation
-  // This should be called when a match ends (status = FINISHED)
-  // 1. Get the match and verify it's FINISHED (not CANCELLED)
-  // 2. Get all predictions for this match where pointsEarned is null
-  // 3. For each prediction:
-  //    - Compare predictedScore1/predictedScore2 with actual match.score1/score2
-  //    - If exact match (predictedScore1 === score1 && predictedScore2 === score2): pointsEarned = 10
-  //    - Else if correct outcome (win/draw/loss matches): pointsEarned = 5
-  //      - Helper: getMatchOutcome(score1, score2) returns 'WIN', 'DRAW', or 'LOSS' for first team
-  //      - Compare predicted outcome with actual outcome
-  //    - Else: pointsEarned = 0
-  //    - If prediction.isBoosted is true, multiply pointsEarned by 2 (2x booster)
-  // 4. Update UserPredictionStats for each user:
-  //    - Add pointsEarned to totalPoints
-  //    - Increment exactMatchesCount if pointsEarned === 10 (before booster multiplier)
-  //    - Increment correctOutcomesCount if pointsEarned === 5 (before booster multiplier)
-  // 5. Save all updated predictions and stats
-  async calculatePointsForMatch(matchId: string): Promise<void> {
-    // TODO: Implement this method
+  async calculatePointsForMatch(matchId: string): Promise<Match> {
+    const match = await this.matchRepository.findOne({
+      where: { id: matchId },
+      relations: { firstOpponent: true, secondOpponent: true },
+    });
+
+    if (!match) {
+      throw new NotFoundError(MATCH_TRANSLATION_CODES.matchNotFound);
+    }
+
+    if (match.status !== MatchStatus.FINISHED) {
+      throw new BadRequestError(PREDICTION_TRANSLATION_CODES.matchNotFinished);
+    }
+
+    if (match.pointsCalculated) {
+      throw new ConflictError(PREDICTION_TRANSLATION_CODES.pointsAlreadyCalculated);
+    }
+
+    const predictions = await this.predictionRepository.find({
+      where: { matchId },
+    });
+
+    try {
+      return await this.dataSource.transaction(async (manager) => {
+        const statsMap = new Map<string, UserPredictionStats>();
+
+        for (const prediction of predictions) {
+          const basePoints = this.calculateBasePoints(
+            prediction.predictedScore1,
+            prediction.predictedScore2,
+            match.score1!,
+            match.score2!,
+          );
+
+          prediction.pointsEarned = prediction.isBoosted ? basePoints * 2 : basePoints;
+          await manager.save(prediction);
+
+          // Update user prediction stats
+          let stats = statsMap.get(prediction.userId);
+          if (!stats) {
+            stats = (await manager.findOne(UserPredictionStats, { where: { userId: prediction.userId } })) ?? undefined;
+            if (!stats) {
+              stats = manager.create(UserPredictionStats, {
+                id: generateUuidv7(),
+                userId: prediction.userId,
+                totalPoints: 0,
+                exactMatchesCount: 0,
+                correctOutcomesCount: 0,
+                totalPredictionsCount: 0,
+                lastUpdated: new Date(),
+              });
+            }
+            statsMap.set(prediction.userId, stats);
+          }
+
+          stats.totalPoints += prediction.pointsEarned;
+          if (basePoints === 10) {
+            stats.exactMatchesCount += 1;
+          } else if (basePoints === 5) {
+            stats.correctOutcomesCount += 1;
+          }
+        }
+
+        // Save all updated stats
+        for (const stats of statsMap.values()) {
+          stats.lastUpdated = new Date();
+          await manager.save(stats);
+        }
+
+        // TODO: Calculate fantasy points for players here
+
+        // TODO: Update player stats table here
+
+        match.pointsCalculated = true;
+        await manager.save(match);
+
+        return match;
+      });
+    } catch (error) {
+      if (error instanceof BadRequestError || error instanceof ConflictError || error instanceof NotFoundError) {
+        throw error;
+      }
+      this.logger.error(`Error calculating points for match: ${(error as Error).message}`);
+      throw new InternalServerError(PREDICTION_TRANSLATION_CODES.pointsCalculationFailed);
+    }
+  }
+
+  private getOutcome(score1: number, score2: number): 'WIN' | 'DRAW' | 'LOSS' {
+    if (score1 > score2) return 'WIN';
+    if (score1 < score2) return 'LOSS';
+    return 'DRAW';
+  }
+
+  private calculateBasePoints(
+    predictedScore1: number,
+    predictedScore2: number,
+    actualScore1: number,
+    actualScore2: number,
+  ): number {
+    if (predictedScore1 === actualScore1 && predictedScore2 === actualScore2) {
+      return 10;
+    }
+    if (this.getOutcome(predictedScore1, predictedScore2) === this.getOutcome(actualScore1, actualScore2)) {
+      return 5;
+    }
+    return 0;
   }
 }

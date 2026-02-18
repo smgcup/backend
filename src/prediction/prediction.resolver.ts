@@ -3,9 +3,11 @@ import { UseGuards } from '@nestjs/common';
 import { PredictionService } from './prediction.service';
 import { Prediction } from './entities/prediction.entity';
 import { UserPredictionStats } from './entities/user-prediction-stats.entity';
+import { Match } from '../match/entities/match.entity';
 import { CreatePredictionDto } from './dto/create-prediction.dto';
 import { UpdatePredictionDto } from './dto/update-prediction.dto';
 import { JwtAuthGuard } from '../user/guards/jwt-auth.guard';
+import { AdminAuthGuard } from '../admin/auth/guards/admin-auth.guard';
 import { UserSession } from '../user/decorators/user-session.decorator';
 import { User } from '../user/entities/user.entity';
 
@@ -70,5 +72,11 @@ export class PredictionResolver {
     @Args('id', { type: () => String }) id: string,
   ): Promise<Prediction> {
     return await this.predictionService.deletePrediction(user.id, id);
+  }
+
+  // @UseGuards(AdminAuthGuard)
+  @Mutation(() => Match, { name: 'calculateMatchPoints' })
+  async calculateMatchPoints(@Args('matchId', { type: () => String }) matchId: string): Promise<Match> {
+    return await this.predictionService.calculatePointsForMatch(matchId);
   }
 }

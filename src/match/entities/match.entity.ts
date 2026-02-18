@@ -58,4 +58,8 @@ export class Match {
   @ManyToOne(() => Player, { nullable: true })
   @JoinColumn({ name: 'mvp_id' })
   mvp: Player | null;
+
+  @Field(() => Boolean)
+  @Column({ name: 'points_calculated', type: 'boolean', nullable: false, default: false })
+  pointsCalculated: boolean;
 }

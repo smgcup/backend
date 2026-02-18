@@ -12,6 +12,11 @@ export const PREDICTION_TRANSLATION_CODES = {
   // Booster
   boosterAlreadyUsed: 'boosterAlreadyUsed',
 
+  // Points Calculation
+  matchNotFinished: 'matchNotFinished',
+  pointsAlreadyCalculated: 'pointsAlreadyCalculated',
+  pointsCalculationFailed: 'pointsCalculationFailed',
+
   // Persistence
   predictionCreationFailed: 'predictionCreationFailed',
   predictionUpdateFailed: 'predictionUpdateFailed',

@@ -120,6 +120,7 @@ type Match {
   id: ID!
   location: MatchLocation
   mvp: Player
+  pointsCalculated: Boolean!
   round: Int!
   score1: Int
   score2: Int
@@ -165,6 +166,7 @@ enum MatchStatus {
 
 type Mutation {
   adminLogin(passkey: String!): AdminLoginResult!
+  calculateMatchPoints(matchId: String!): Match!
   createAllPlayerAppearances(input: CreateAllPlayerAppearancesDto!): [PlayerAppearance!]!
   createFantasyPlayer(createFantasyPlayerDto: CreateFantasyPlayerDto!): FantasyPlayer!
   createMatch(createMatchDto: CreateMatchDto!): Match!
