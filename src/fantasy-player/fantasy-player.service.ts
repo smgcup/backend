@@ -19,7 +19,7 @@ export class FantasyPlayerService {
   async getFantasyPlayerByPlayerId(playerId: string): Promise<FantasyPlayer> {
     const fantasyPlayer = await this.fantasyPlayerRepository.findOne({
       where: { playerId },
-      relations: ['player'],
+      relations: ['player', 'player.team'],
     });
     if (!fantasyPlayer) {
       throw new NotFoundError(FANTASY_PLAYER_TRANSLATION_CODES.fantasyPlayerNotFound);
@@ -28,7 +28,7 @@ export class FantasyPlayerService {
   }
 
   async getAllFantasyPlayers(): Promise<FantasyPlayer[]> {
-    return await this.fantasyPlayerRepository.find({ relations: ['player'] });
+    return await this.fantasyPlayerRepository.find({ relations: ['player', 'player.team'] });
   }
 
   async createFantasyPlayer(createFantasyPlayerDto: CreateFantasyPlayerDto): Promise<FantasyPlayer> {

@@ -13,4 +13,5 @@ export * from './image.translation-codes';
 export * from './prediction.translation-codes';
 export * from './player-appearance.translation-codes';
 export * from './fantasy-player.translation-codes';
+export * from './fantasy-team.translation-codes';
 export * from './admin.translation-codes';

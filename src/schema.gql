@@ -91,6 +91,25 @@ type FantasyPlayer {
   price: Float!
 }
 
+type FantasyTeam {
+  budget: Float!
+  captainPlayer: FantasyPlayer!
+  createdAt: Date!
+  freeTransfers: Int!
+  id: ID!
+  slots: [FantasyTeamSlot!]!
+  teamName: String!
+  updatedAt: Date!
+  user: User!
+}
+
+type FantasyTeamSlot {
+  fantasyPlayer: FantasyPlayer!
+  id: ID!
+  isBenched: Boolean!
+  slotOrder: Int!
+}
+
 input ImageUploadInput {
   fileBase64: String!
   mimeType: String!
@@ -190,6 +209,7 @@ type Mutation {
   deleteTeam(id: String!): Team!
   login(loginInput: LoginInput!): AuthResponse!
   register(registerInput: RegisterUserInput!): AuthResponse!
+  saveFantasyTeam(input: SaveFantasyTeamDto!): FantasyTeam!
   startMatch(id: String!): Match!
   updateFantasyPlayer(playerId: String!, updateFantasyPlayerDto: UpdateFantasyPlayerDto!): FantasyPlayer!
   updateMatch(id: String!, updateMatchDto: UpdateMatchDto!): Match!
@@ -285,6 +305,7 @@ type Query {
   matchById(id: String!): Match!
   matchEvents(matchId: String!): [MatchEvent!]!
   matches: [Match!]!
+  myFantasyTeam: FantasyTeam
   myPredictionForMatch(matchId: String!): Prediction
   myPredictionStats: UserPredictionStats!
   myPredictions: [Prediction!]!
@@ -319,6 +340,20 @@ input RegisterUserInput {
 
   """Username"""
   username: String!
+}
+
+input SaveFantasyTeamDto {
+  budget: Float!
+  captainPlayerId: String!
+  freeTransfers: Int!
+  slots: [SaveFantasyTeamSlotDto!]!
+  teamName: String!
+}
+
+input SaveFantasyTeamSlotDto {
+  isBenched: Boolean!
+  playerId: String!
+  slotOrder: Int!
 }
 
 type StatisticsOutput {

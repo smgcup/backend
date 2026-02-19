@@ -20,6 +20,7 @@ import { PredictionModule } from './prediction/prediction.module';
 import { StatisticsModule } from './statistics/statistics.module';
 import { PlayerAppearanceModule } from './player-appearance/player-appearance.module';
 import { FantasyPlayerModule } from './fantasy-player/fantasy-player.module';
+import { FantasyTeamModule } from './fantasy-team/fantasy-team.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { FantasyPlayerModule } from './fantasy-player/fantasy-player.module';
     StatisticsModule,
     PlayerAppearanceModule,
     FantasyPlayerModule,
+    FantasyTeamModule,
   ],
   controllers: [AppController],
   providers: [AppService, ApplicationExceptionFilter],
