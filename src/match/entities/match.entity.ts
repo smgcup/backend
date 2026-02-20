@@ -46,8 +46,20 @@ export class Match {
   @Column({ name: 'location', type: 'enum', enum: MatchLocation, nullable: true })
   location: MatchLocation | null;
 
+  @Field(() => Int, { nullable: true })
+  @Column({ name: 'fdr1', type: 'integer', nullable: true })
+  fdr1: number | null;
+
+  @Field(() => Int, { nullable: true })
+  @Column({ name: 'fdr2', type: 'integer', nullable: true })
+  fdr2: number | null;
+
   @Field(() => Player, { nullable: true })
   @ManyToOne(() => Player, { nullable: true })
   @JoinColumn({ name: 'mvp_id' })
   mvp: Player | null;
+
+  @Field(() => Boolean)
+  @Column({ name: 'points_calculated', type: 'boolean', nullable: false, default: false })
+  pointsCalculated: boolean;
 }
